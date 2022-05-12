@@ -1,4 +1,4 @@
 export default {
-  mongoUrl: process.env.MONGO_URL || 'mongodb://localhost:49153/clean-node-api',
+  mongoUrl: process.env.MONGO_URL || 'mongodb://docker:mongopw@localhost:49153',
   port: process.env.PORT || 5050
 }
