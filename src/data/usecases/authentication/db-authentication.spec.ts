@@ -2,6 +2,7 @@ import { AuthenticationModel } from '../../../domain/usecases/authentication'
 import { HashComparer } from '../../protocols/criptography/hash-comparer'
 import { TokenGenerator } from '../../protocols/criptography/token-generator'
 import { LoadAccountByEmailRepository } from '../../protocols/db/load-account-by-email-repository'
+import { UpdateAccessTokenRepository } from '../../protocols/db/update-access-token-repository'
 import { AccountModel } from '../add-account/db-add-account-protocols'
 import { DbAuthentication } from './db-authentication'
 
@@ -23,9 +24,16 @@ class TokenGeneratorStub implements TokenGenerator {
   }
 }
 
+class UpdateAccessTokenRepositoryStub implements UpdateAccessTokenRepository {
+  async update (id: string, token: string): Promise<void> {
+    return null
+  }
+}
+
 const loadAccountByEmailRepositoryStub = new LoadAccountByEmailRepositoryStub()
 const hashComparerStub = new HashComparerStub()
 const tokenGeneratorStub = new TokenGeneratorStub()
+const updateAccessTokenRepositoryStub = new UpdateAccessTokenRepositoryStub()
 
 const makeFakeAccount = (): AccountModel => ({
   id: 'valid_id',
@@ -40,7 +48,7 @@ const makeFakeAuthentication = (): AuthenticationModel => ({
 })
 
 const makeSut = (): DbAuthentication => {
-  return new DbAuthentication(loadAccountByEmailRepositoryStub, hashComparerStub, tokenGeneratorStub)
+  return new DbAuthentication(loadAccountByEmailRepositoryStub, hashComparerStub, tokenGeneratorStub, updateAccessTokenRepositoryStub)
 }
 
 describe('DbAuthentication UseCase', () => {
@@ -98,6 +106,13 @@ describe('DbAuthentication UseCase', () => {
     jest.spyOn(tokenGeneratorStub, 'generate').mockRejectedValueOnce(new Error())
     const promise = sut.auth(makeFakeAuthentication())
     await expect(promise).rejects.toThrow()
+  })
+
+  it('should call UpdateAccessTokenRepository with correct values', async () => {
+    const sut = makeSut()
+    const updateSpy = jest.spyOn(updateAccessTokenRepositoryStub, 'update')
+    await sut.auth(makeFakeAuthentication())
+    expect(updateSpy).toHaveBeenCalledWith('valid_id', 'valid_token')
   })
 
   it('should return a valid token on success', async () => {
