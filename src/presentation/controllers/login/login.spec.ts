@@ -100,4 +100,11 @@ describe('Login Controller', () => {
     expect(httpResponse.statusCode).toBe(401)
     expect(httpResponse.body).toEqual(new UnauthorizedError())
   })
+
+  it('should return 200 if valid credentials are provided', async () => {
+    const sut = makeSut()
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toEqual({ acessToken: 'any_token' })
+  })
 })
