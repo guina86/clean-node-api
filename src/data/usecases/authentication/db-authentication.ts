@@ -1,10 +1,10 @@
-import { Authentication, AuthenticationModel, HashComparer, LoadAccountByEmailRepository, TokenGenerator, UpdateAccessTokenRepository } from './db-authentication-protocols'
+import { Authentication, AuthenticationModel, HashComparer, LoadAccountByEmailRepository, Encrypter, UpdateAccessTokenRepository } from './db-authentication-protocols'
 
 export class DbAuthentication implements Authentication {
   constructor (
     private readonly loadAccountByEmailRepository: LoadAccountByEmailRepository,
     private readonly hashComparer: HashComparer,
-    private readonly tokenGenerator: TokenGenerator,
+    private readonly encrypter: Encrypter,
     private readonly updateAcessTokenRepository: UpdateAccessTokenRepository
   ) { }
 
@@ -13,7 +13,7 @@ export class DbAuthentication implements Authentication {
     if (!account) return null
     const auth = await this.hashComparer.compare(authentication.password, account.password)
     if (!auth) return null
-    const token = await this.tokenGenerator.generate(account.id)
+    const token = await this.encrypter.encrypt(account.id)
     await this.updateAcessTokenRepository.update(account.id, token)
     return token
   }
