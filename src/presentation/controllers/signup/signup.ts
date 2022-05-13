@@ -6,7 +6,7 @@ export class SignUpController implements Controller {
   constructor (
     private readonly emailValidator: EmailValidator,
     private readonly addAccount: AddAccount,
-    private readonly validation?: Validation
+    private readonly validation: Validation
   ) { }
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
