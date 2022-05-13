@@ -1,12 +1,6 @@
-import { EmailValidator, HttpRequest, Authentication } from './login-protocols'
-import { InvalidParamError, MissingParamError, ServerError, UnauthorizedError } from '../../errors'
+import { HttpRequest, Authentication, Validation } from './login-protocols'
+import { ServerError, UnauthorizedError } from '../../errors'
 import { LoginController } from './login'
-
-class EmailValidatorStub implements EmailValidator {
-  isValid (email: string): boolean {
-    return true
-  }
-}
 
 class AuthenticationStub implements Authentication {
   async auth (email: string, password: string): Promise<string> {
@@ -14,8 +8,14 @@ class AuthenticationStub implements Authentication {
   }
 }
 
-const emailValidatorStub = new EmailValidatorStub()
+class ValidationStub implements Validation {
+  validate (input: any): Error {
+    return null
+  }
+}
+
 const authenticationStub = new AuthenticationStub()
+const validationStub = new ValidationStub()
 
 const makeFakeRequest = (): HttpRequest => ({
   body: {
@@ -24,58 +24,9 @@ const makeFakeRequest = (): HttpRequest => ({
   }
 })
 
-const makeSut = (): LoginController => new LoginController(emailValidatorStub, authenticationStub)
+const makeSut = (): LoginController => new LoginController(authenticationStub, validationStub)
 
 describe('Login Controller', () => {
-  it('should return 400 if no email is provided', async () => {
-    const sut = makeSut()
-    const httpRequest = {
-      body: {
-        password: 'any_password'
-      }
-    }
-    const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new MissingParamError('email'))
-  })
-
-  it('should return 400 if no password is provided', async () => {
-    const sut = makeSut()
-    const httpRequest = {
-      body: {
-        email: 'any_email@email.com'
-      }
-    }
-    const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new MissingParamError('password'))
-  })
-
-  it('should call EmailValidator with correct email', async () => {
-    const sut = makeSut()
-    const isValidSpy = jest.spyOn(emailValidatorStub, 'isValid')
-    await sut.handle(makeFakeRequest())
-    expect(isValidSpy).toHaveBeenCalledWith('any_email@mail.com')
-  })
-
-  it('should return 400 if email is invalid', async () => {
-    const sut = makeSut()
-    jest.spyOn(emailValidatorStub,'isValid').mockReturnValueOnce(false)
-    const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new InvalidParamError('email'))
-  })
-
-  it('should return 500 if EmailValidator throws', async () => {
-    const sut = makeSut()
-    jest.spyOn(emailValidatorStub,'isValid').mockImplementationOnce(() => {
-      throw new Error()
-    })
-    const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse.statusCode).toBe(500)
-    expect(httpResponse.body).toEqual(new ServerError())
-  })
-
   it('should return 500 if Authentication throws', async () => {
     const sut = makeSut()
     jest.spyOn(authenticationStub,'auth').mockImplementationOnce(async () => {
@@ -106,5 +57,23 @@ describe('Login Controller', () => {
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toEqual({ acessToken: 'any_token' })
+  })
+
+  it('should call Validation with correct values', async () => {
+    const sut = makeSut()
+    const validateSpy = jest.spyOn(validationStub, 'validate')
+    const httpRequest = makeFakeRequest()
+    await sut.handle(httpRequest)
+
+    expect(validateSpy).toHaveBeenCalledWith(httpRequest.body)
+  })
+
+  it('should return 400 if validation returns an error', async () => {
+    const sut = makeSut()
+    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new Error('any_error'))
+    const httpResponse = await sut.handle(makeFakeRequest())
+
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual(new Error('any_error'))
   })
 })
