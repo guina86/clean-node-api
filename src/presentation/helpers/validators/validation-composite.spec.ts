@@ -11,6 +11,10 @@ class ValidationStub implements Validation {
 const validationStubs = [new ValidationStub(), new ValidationStub()]
 
 describe('Validation Composite', () => {
+  beforeEach(() => {
+    jest.resetAllMocks()
+  })
+
   it('should return an error if any validation fails', () => {
     const sut = new ValidationComposite(validationStubs)
     jest.spyOn(validationStubs[0], 'validate').mockReturnValueOnce(new MissingParamError('field'))
@@ -24,5 +28,11 @@ describe('Validation Composite', () => {
     jest.spyOn(validationStubs[1], 'validate').mockReturnValueOnce(new MissingParamError('field_2'))
     const error = sut.validate({ field: 'any_value' })
     expect(error).toEqual(new InvalidParamError('field_1'))
+  })
+
+  it('should return nothing if all validations succeed', () => {
+    const sut = new ValidationComposite(validationStubs)
+    const error = sut.validate({ field: 'any_value' })
+    expect(error).toBeFalsy()
   })
 })
