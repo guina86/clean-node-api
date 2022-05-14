@@ -16,7 +16,7 @@ describe('Login Routes', () => {
   })
 
   beforeEach(async () => {
-    accountCollection = await MongoHelper.getCollection('account')
+    accountCollection = await MongoHelper.getCollection('accounts')
     await accountCollection.deleteMany({})
   })
 
@@ -49,6 +49,16 @@ describe('Login Routes', () => {
           password: '123'
         })
         .expect(200)
+    })
+
+    it('should return 401 on login', async () => {
+      await request(app)
+        .post('/api/login')
+        .send({
+          email: 'email@mail.com',
+          password: '123'
+        })
+        .expect(401)
     })
   })
 })
