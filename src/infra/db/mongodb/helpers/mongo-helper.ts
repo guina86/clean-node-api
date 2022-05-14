@@ -1,4 +1,4 @@
-import { Collection, MongoClient } from 'mongodb'
+import { Collection, MongoClient, ObjectId } from 'mongodb'
 import { AccountModel } from '../../../../domain/models/account'
 
 export const MongoHelper = {
@@ -25,6 +25,10 @@ export const MongoHelper = {
   map (data: any): AccountModel {
     const { _id, ...rest } = data
     return { ...rest, id: _id.toHexString() }
+  },
+
+  to_id (id: string): ObjectId {
+    return ObjectId.createFromHexString(id)
   }
 
 }
