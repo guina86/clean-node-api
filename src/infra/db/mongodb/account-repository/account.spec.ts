@@ -1,8 +1,15 @@
 import { Collection } from 'mongodb'
+import { AddAccountModel } from '../../../../domain/usecases/add-account'
 import { MongoHelper } from '../helpers/mongo-helper'
 import { AccountMongorepository } from './account'
 
 let accountCollection: Collection
+
+const makeFakeAccount = (): AddAccountModel => ({
+  name: 'valid_name',
+  email: 'valid_email@mail.com',
+  password: 'valid_password'
+})
 
 describe('Account Mongo Repository', () => {
   beforeAll(async () => {
@@ -20,11 +27,7 @@ describe('Account Mongo Repository', () => {
 
   it('should return an account on add success', async () => {
     const sut = new AccountMongorepository()
-    const account = await sut.add({
-      name: 'valid_name',
-      email: 'valid_email@mail.com',
-      password: 'valid_password'
-    })
+    const account = await sut.add(makeFakeAccount())
 
     expect(account).toBeTruthy()
     expect(account.id).toBeTruthy()
@@ -35,11 +38,7 @@ describe('Account Mongo Repository', () => {
 
   it('should return an account on loadByEmail success', async () => {
     const sut = new AccountMongorepository()
-    await accountCollection.insertOne({
-      name: 'valid_name',
-      email: 'valid_email@mail.com',
-      password: 'valid_password'
-    })
+    await accountCollection.insertOne(makeFakeAccount())
     const account = await sut.loadByEmail('valid_email@mail.com')
     expect(account).toBeTruthy()
     expect(account.id).toBeTruthy()
@@ -52,5 +51,14 @@ describe('Account Mongo Repository', () => {
     const sut = new AccountMongorepository()
     const account = await sut.loadByEmail('valid_email@mail.com')
     expect(account).toBeNull()
+  })
+
+  it('should update the account access token on updateAccessToken success', async () => {
+    const sut = new AccountMongorepository()
+    const { insertedId } = await accountCollection.insertOne(makeFakeAccount())
+    await sut.updateAccessToken(insertedId.toHexString(), 'valid_token')
+    const account = await accountCollection.findOne({ _id: insertedId })
+    expect(account).toBeTruthy()
+    expect(account.accessToken).toBe('valid_token')
   })
 })
