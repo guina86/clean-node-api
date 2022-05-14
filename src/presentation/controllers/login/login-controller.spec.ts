@@ -1,6 +1,6 @@
-import { HttpRequest, Authentication, Validation, AuthenticationModel } from './login-protocols'
+import { HttpRequest, Authentication, Validation, AuthenticationModel } from './login-controller-protocols'
 import { ServerError, UnauthorizedError } from '../../errors'
-import { LoginController } from './login'
+import { LoginController } from './login-controller'
 
 class AuthenticationStub implements Authentication {
   async auth (authentication: AuthenticationModel): Promise<string> {
