@@ -6,5 +6,5 @@ import { AccountMongorepository } from '../../../../infra/db/mongodb/account/acc
 export const makeDbAddAccount = (): AddAccount => {
   const bcryptAdapter = new BcryptAdapter()
   const accountMongorepository = new AccountMongorepository()
-  return new DbAddAccount(bcryptAdapter, accountMongorepository)
+  return new DbAddAccount(bcryptAdapter, accountMongorepository, accountMongorepository)
 }
