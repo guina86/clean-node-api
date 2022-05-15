@@ -1,6 +1,6 @@
 import { SignUpController } from './signup-controller'
 import { ServerError } from '../../errors'
-import { AddAccount, AddAccountModel, AccountModel, HttpRequest, Validation } from './signup-controller-protocols'
+import { AddAccount, AddAccountModel, AccountModel, HttpRequest, Validation, Authentication, AuthenticationModel } from './signup-controller-protocols'
 
 class AddAccountStub implements AddAccount {
   async add (account: AddAccountModel): Promise<AccountModel> {
@@ -14,8 +14,15 @@ class ValidationStub implements Validation {
   }
 }
 
+class AuthenticationStub implements Authentication {
+  async auth (authentication: AuthenticationModel): Promise<string> {
+    return 'any_token'
+  }
+}
+
 const addAccountStub = new AddAccountStub()
 const validationStub = new ValidationStub()
+const authenticationStub = new AuthenticationStub()
 
 const makeFakeAccount = (): AccountModel => ({
   id: 'valid_id',
@@ -34,7 +41,7 @@ const makeFakeRequest = (): HttpRequest => ({
 })
 
 const makeSut = (): SignUpController => {
-  return new SignUpController(addAccountStub, validationStub)
+  return new SignUpController(addAccountStub, validationStub, authenticationStub)
 }
 
 describe('SignUp Controller', () => {
@@ -86,5 +93,12 @@ describe('SignUp Controller', () => {
 
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new Error('any_error'))
+  })
+
+  it('should call Authentication with correct values', async () => {
+    const sut = makeSut()
+    const auth = jest.spyOn(authenticationStub, 'auth')
+    await sut.handle(makeFakeRequest())
+    expect(auth).toHaveBeenCalledWith({ email: 'any_email@mail.com', password: 'any_password' })
   })
 })
