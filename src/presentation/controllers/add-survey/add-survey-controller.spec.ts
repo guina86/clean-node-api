@@ -7,6 +7,8 @@ class ValidationStub implements Validation {
   }
 }
 
+const validationStub = new ValidationStub()
+
 const makeFakeRequest = (): HttpRequest => ({
   body: {
     question: 'any_question',
@@ -16,12 +18,12 @@ const makeFakeRequest = (): HttpRequest => ({
   }
 })
 
-const validationStub = new ValidationStub()
+const makeSut = (): AddSurveyController => new AddSurveyController(validationStub)
 
 describe('AddSurvey Controller', () => {
   it('should call Validation with correct values', async () => {
     const validateSpy = jest.spyOn(validationStub, 'validate')
-    const sut = new AddSurveyController(validationStub)
+    const sut = makeSut()
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
     expect(validateSpy).toHaveBeenCalledWith(httpRequest.body)
