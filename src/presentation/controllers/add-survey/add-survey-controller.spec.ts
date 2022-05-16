@@ -51,7 +51,7 @@ describe('AddSurvey Controller', () => {
     const sut = makeSut()
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
-    expect(addSpy).toHaveBeenCalledWith(httpRequest.body)
+    expect(addSpy).toHaveBeenCalledWith({ ...httpRequest.body, date: expect.any(Date) })
   })
 
   it('should return 500 if AddSurvey throws', async () => {

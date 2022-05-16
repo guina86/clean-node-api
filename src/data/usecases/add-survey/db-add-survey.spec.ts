@@ -11,7 +11,8 @@ const makeFakeSurveyData = (): AddSurveyModel => ({
   question: 'any_question',
   answers: [
     { image: 'any_image', answer: 'any_answer' }
-  ]
+  ],
+  date: new Date()
 })
 
 const makeSut = (): DbAddSurvey => new DbAddSurvey(addSurveyRepositoryStub)
