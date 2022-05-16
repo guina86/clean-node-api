@@ -1,8 +1,6 @@
 import { AuthMiddleware } from './auth-middleware'
 import { AccessDeniedError, ServerError } from '../errors'
-import { LoadAccountByToken } from '../../domain/usecases/load-account-by-token'
-import { AccountModel } from '../../domain/models/account'
-import { HttpRequest, Middleware } from '../protocols'
+import { HttpRequest, Middleware, AccountModel, LoadAccountByToken } from './auth-middleware-protocols'
 
 class LoadAccountByTokenStub implements LoadAccountByToken {
   async loadByToken (accessToken: string, role?: string): Promise<AccountModel> {
