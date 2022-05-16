@@ -43,6 +43,13 @@ describe('Auth MIddleware', () => {
     expect(httpResponse.body).toEqual(new AccessDeniedError())
   })
 
+  it('should return 200 if LoadAccountByToken returns an account ', async () => {
+    const sut = makeSut()
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toEqual({ accountId: 'valid_id' })
+  })
+
   it('should call LoadAccountByToken with correct acessToken', async () => {
     const sut = makeSut()
     const loadByTokenSpy = jest.spyOn(loadAccountByTokenStub, 'loadByToken')
