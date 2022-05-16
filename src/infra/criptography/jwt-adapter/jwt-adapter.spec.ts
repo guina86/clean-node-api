@@ -34,13 +34,13 @@ describe('Jwt Adapter', () => {
       const sut = new JwtAdapter('secret')
       const verifySpy = jest.spyOn(jwt, 'verify')
       await sut.decrypt('any_token')
-      expect(verifySpy).toHaveBeenCalledWith('any_token', 'secret')
+      expect(verifySpy).toHaveBeenCalledWith('any_token', 'secret', expect.any(Function))
     })
 
     it('should return a value on verify success', async () => {
       const sut = new JwtAdapter('secret')
       const value = await sut.decrypt('any_token')
-      expect(value).toBe('any_value')
+      expect(value).toBe('any_token')
     })
 
     it('should throw if verify throws', async () => {
