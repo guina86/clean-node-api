@@ -52,7 +52,7 @@ describe('Account Mongo Repository', () => {
 
     it('should return null if loadByEmail fails', async () => {
       const sut = new AccountMongorepository()
-      const account = await sut.loadByEmail('valid_email@mail.com')
+      const account = await sut.loadByEmail('email@mail.com')
       expect(account).toBeNull()
     })
   })
@@ -80,9 +80,22 @@ describe('Account Mongo Repository', () => {
       expect(account.password).toBe('valid_password')
     })
 
-    it('should return null if loadByEmail fails', async () => {
+    it('should return an account on loadByToken with role', async () => {
       const sut = new AccountMongorepository()
-      const account = await sut.loadByEmail('valid_email@mail.com')
+      const fakeAccount = makeFakeAccount()
+      fakeAccount.role = 'any_role'
+      await accountCollection.insertOne(fakeAccount)
+      const account = await sut.loadByToken('valid_token', 'any_role')
+      expect(account).toBeTruthy()
+      expect(account.id).toBeTruthy()
+      expect(account.name).toBe('valid_name')
+      expect(account.email).toBe('valid_email@mail.com')
+      expect(account.password).toBe('valid_password')
+    })
+
+    it('should return null if loadByToken fails', async () => {
+      const sut = new AccountMongorepository()
+      const account = await sut.loadByToken('invalid_token')
       expect(account).toBeNull()
     })
   })
