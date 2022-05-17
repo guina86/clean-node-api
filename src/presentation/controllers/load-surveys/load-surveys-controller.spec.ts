@@ -1,5 +1,6 @@
 import { LoadSurveys, SurveyModel } from './load-surveys-controller-protocols'
 import { LoadSurveysController } from './load-surveys-controller'
+import { ServerError } from '../../errors'
 
 describe('LoadSurveys Controller', () => {
   class LoadSurveysStub implements LoadSurveys {
@@ -18,7 +19,7 @@ describe('LoadSurveys Controller', () => {
       { image: `image${i}b.png`, answer: `answer ${i} B` },
       { image: `image${i}c.png`, answer: `answer ${i} C` }
     ],
-    date: new Date()
+    date: new Date('2022-1-1')
   }))
 
   const makeSut = (): LoadSurveysController => new LoadSurveysController(loadSurveysStub)
@@ -35,5 +36,13 @@ describe('LoadSurveys Controller', () => {
     const httpResponse = await sut.handle({})
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toEqual(makeFakeSurveys())
+  })
+
+  it('should return 500 if LoadSurvey throws', async () => {
+    const sut = makeSut()
+    jest.spyOn(loadSurveysStub, 'load').mockRejectedValueOnce(new Error())
+    const httpResponse = await sut.handle({})
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
   })
 })
