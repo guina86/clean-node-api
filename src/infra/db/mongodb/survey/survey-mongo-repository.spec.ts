@@ -1,30 +1,22 @@
 import { Collection } from 'mongodb'
 import { SurveyModel } from '../../../../domain/models/survey'
-import { AddSurveyModel } from '../../../../domain/usecases/add-survey'
 import { MongoHelper } from '../helpers/mongo-helper'
 import { SurveyMongorepository } from './survey-mongo-repository'
 
 let surveyCollection: Collection
 
-const makeFakeSurveyData = (): AddSurveyModel => ({
-  question: 'any_question',
+const makeFakeSurvey = (): SurveyModel => ({
+  id: 'id_',
+  question: 'question',
   answers: [
-    { image: 'any_image', answer: 'any_answer' },
-    { answer: 'other_answer' }
+    { image: 'imagea.png', answer: 'answer A' },
+    { image: 'imageb.png', answer: 'answer B' },
+    { image: 'imagec.png', answer: 'answer C' }
   ],
   date: new Date('2022-1-1')
 })
 
-const makeFakeSurveys = (): SurveyModel[] => [...Array(3)].map((_, i) => ({
-  id: `id_${i}`,
-  question: `question ${i}`,
-  answers: [
-    { image: `image${i}a.png`, answer: `answer ${i} A` },
-    { image: `image${i}b.png`, answer: `answer ${i} B` },
-    { image: `image${i}c.png`, answer: `answer ${i} C` }
-  ],
-  date: new Date('2022-1-1')
-}))
+const makeFakeSurveys = (n: number): SurveyModel[] => [...Array(n)].map(() => makeFakeSurvey())
 
 describe('Survey Mongo Repository', () => {
   beforeAll(async () => {
@@ -43,8 +35,8 @@ describe('Survey Mongo Repository', () => {
   describe('add()', () => {
     it('should add a survey on success', async () => {
       const sut = new SurveyMongorepository()
-      await sut.add(makeFakeSurveyData())
-      const survey = await surveyCollection.findOne({ question: 'any_question' })
+      await sut.add(makeFakeSurvey())
+      const survey = await surveyCollection.findOne({ question: 'question' })
       expect(survey).toBeTruthy()
     })
   })
@@ -52,10 +44,10 @@ describe('Survey Mongo Repository', () => {
   describe('loadAll()', () => {
     it('should load all surveys on success', async () => {
       const sut = new SurveyMongorepository()
-      await surveyCollection.insertMany(makeFakeSurveys())
+      await surveyCollection.insertMany(makeFakeSurveys(3))
       const surveys = await sut.loadAll()
       expect(surveys).toHaveLength(3)
-      expect(surveys[0].question).toBe('question 0')
+      expect(surveys[0].question).toBe('question')
       expect(surveys[1].date).toEqual(new Date('2022-1-1'))
     })
 
