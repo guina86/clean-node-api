@@ -1,5 +1,4 @@
 import { Collection, MongoClient, ObjectId } from 'mongodb'
-import { AccountModel } from '../../../../domain/models/account'
 
 export const MongoHelper = {
   client: null as MongoClient | null,
@@ -22,7 +21,7 @@ export const MongoHelper = {
     return this.client.db('clean-node-api').collection(name)
   },
 
-  map (data: any): AccountModel {
+  map (data: any): any {
     const { _id, ...rest } = data
     return { ...rest, id: _id.toHexString() }
   },
