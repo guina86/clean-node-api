@@ -58,5 +58,11 @@ describe('Survey Mongo Repository', () => {
       expect(surveys[0].question).toBe('question 0')
       expect(surveys[1].date).toEqual(new Date('2022-1-1'))
     })
+
+    it('should load empty list', async () => {
+      const sut = new SurveyMongorepository()
+      const surveys = await sut.loadAll()
+      expect(surveys).toHaveLength(0)
+    })
   })
 })
