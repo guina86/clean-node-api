@@ -1,6 +1,6 @@
 import { Collection } from 'mongodb'
-import { SurveyModel } from '../../../../domain/models/survey'
-import { MongoHelper } from '../helpers/mongo-helper'
+import { SurveyModel } from '../../../domain/models/survey'
+import { MongoHelper } from './mongo-helper'
 import { SurveyMongorepository } from './survey-mongo-repository'
 
 let surveyCollection: Collection
