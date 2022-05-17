@@ -10,18 +10,16 @@ describe('LoadSurveys Controller', () => {
 
   const loadSurveysStub = new LoadSurveysStub()
 
-  const makeFakeSurveys = (): SurveyModel[] => [...Array(3)].map((_, i) => (
-    {
-      id: `id_${i}`,
-      question: `question ${i}`,
-      answers: [
-        { image: `image${i}a.png`, answer: `answer ${i} A` },
-        { image: `image${i}b.png`, answer: `answer ${i} B` },
-        { image: `image${i}c.png`, answer: `answer ${i} C` }
-      ],
-      date: new Date()
-    }
-  ))
+  const makeFakeSurveys = (): SurveyModel[] => [...Array(3)].map((_, i) => ({
+    id: `id_${i}`,
+    question: `question ${i}`,
+    answers: [
+      { image: `image${i}a.png`, answer: `answer ${i} A` },
+      { image: `image${i}b.png`, answer: `answer ${i} B` },
+      { image: `image${i}c.png`, answer: `answer ${i} C` }
+    ],
+    date: new Date()
+  }))
 
   const makeSut = (): LoadSurveysController => new LoadSurveysController(loadSurveysStub)
 
@@ -30,5 +28,12 @@ describe('LoadSurveys Controller', () => {
     const loadSpy = jest.spyOn(loadSurveysStub, 'load')
     await sut.handle({})
     expect(loadSpy).toHaveBeenCalled()
+  })
+
+  it('should return 200 on success', async () => {
+    const sut = makeSut()
+    const httpResponse = await sut.handle({})
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toEqual(makeFakeSurveys())
   })
 })
