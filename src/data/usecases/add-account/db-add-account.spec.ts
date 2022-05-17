@@ -1,4 +1,6 @@
-import { AccountModel, AddAccountModel, AddAccountRepository, Hasher, LoadAccountByEmailRepository } from './db-add-account-protocols'
+import { AccountModel } from '../../../domain/models/account'
+import { AddAccountModel } from '../../../domain/usecases/add-account'
+import { AddAccountRepository, Hasher, LoadAccountByEmailRepository } from '../../protocols'
 import { DbAddAccount } from './db-add-account'
 
 class HasherStub implements Hasher {
