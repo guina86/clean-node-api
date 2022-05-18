@@ -103,4 +103,11 @@ describe('SaveSurveyResultController', () => {
       date: expect.any(Date)
     })
   })
+
+  it('should return 200 on success', async () => {
+    const sut = makeSut()
+    const res = await sut.handle(makeFakeRequest())
+    expect(res.statusCode).toBe(200)
+    expect(res.body).toEqual(makeFakeSurveyResult())
+  })
 })
