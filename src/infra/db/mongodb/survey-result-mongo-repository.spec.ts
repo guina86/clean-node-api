@@ -67,5 +67,19 @@ describe('SurveyResultMongoRepository', () => {
       expect(surveyResult.answer).toBe('answer B')
       expect(surveyResult.date).toEqual(new Date('2022-1-1'))
     })
+
+    it('should update a surveyResult if it already exists', async () => {
+      const sut = new SurveyResultMongoRepository()
+      const surveyId = await makeSurveyId()
+      const accountId = await makeAccountId()
+      const surveyResultData = makeFakeSurveyResult(surveyId, accountId)
+      const res = await surveyResultCollection.insertOne(surveyResultData)
+      surveyResultData.answer = 'answer A'
+      surveyResultData.date = new Date('2022-1-2')
+      const surveyResult = await sut.save(surveyResultData)
+      expect(surveyResult.id).toBe(res.insertedId.toHexString())
+      expect(surveyResult.answer).toBe('answer A')
+      expect(surveyResult.date).toEqual(new Date('2022-1-2'))
+    })
   })
 })
