@@ -74,6 +74,14 @@ describe('SaveSurveyResultController', () => {
     expect(res.body).toEqual(new ServerError())
   })
 
+  it('should return 500 SaveSurveyResult throws', async () => {
+    const sut = makeSut()
+    jest.spyOn(saveSurveyResultStub, 'save').mockRejectedValueOnce(new Error())
+    const res = await sut.handle(makeFakeRequest())
+    expect(res.statusCode).toBe(500)
+    expect(res.body).toEqual(new ServerError())
+  })
+
   it('should return 403 invalid answer is provided', async () => {
     const sut = makeSut()
     const httpRequest = makeFakeRequest()
