@@ -25,7 +25,10 @@ const makeFakeSurvey = (): SurveyModel => ({
 
 const makeFakeRequest = (): HttpRequest => ({
   params: {
-    surveyId: 'any_id'
+    surveyId: 'any_survey_id'
+  },
+  body: {
+    answer: 'answer A'
   }
 })
 
@@ -36,7 +39,7 @@ describe('SaveSurveyResultController', () => {
     const sut = makeSut()
     const loadSpy = jest.spyOn(loadSurveyByIdStub, 'load')
     await sut.handle(makeFakeRequest())
-    expect(loadSpy).toBeCalledWith('any_id')
+    expect(loadSpy).toBeCalledWith('any_survey_id')
   })
 
   it('should return 403 if LoadSurveyById returns null', async () => {
@@ -53,5 +56,14 @@ describe('SaveSurveyResultController', () => {
     const res = await sut.handle(makeFakeRequest())
     expect(res.statusCode).toBe(500)
     expect(res.body).toEqual(new ServerError())
+  })
+
+  it('should return 403 invalid answer is provided', async () => {
+    const sut = makeSut()
+    const httpRequest = makeFakeRequest()
+    httpRequest.body.answer = 'invalid_answer'
+    const res = await sut.handle(httpRequest)
+    expect(res.statusCode).toBe(403)
+    expect(res.body).toEqual(new InvalidParamError('answer'))
   })
 })
