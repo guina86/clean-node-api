@@ -1,5 +1,5 @@
-import { InvalidParamError } from '../../presentation/errors'
 import { CompareFieldsValidation } from './compare-fields-validation'
+import { InvalidParamError } from '../../presentation/errors'
 
 describe('RequiredField Validation', () => {
   it('should return a InvalidParamError if fields are not equal', () => {

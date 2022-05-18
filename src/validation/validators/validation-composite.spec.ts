@@ -1,6 +1,6 @@
+import { ValidationComposite } from './validation-composite'
 import { InvalidParamError, MissingParamError } from '../../presentation/errors'
 import { Validation } from '../../presentation/protocols'
-import { ValidationComposite } from './validation-composite'
 
 class ValidationStub implements Validation {
   validate (inputh: any): Error {
