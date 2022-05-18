@@ -1,7 +1,7 @@
-import { AddSurvey, AddSurveyModel } from '../../domain/usecases/add-survey'
+import { AddSurveyController } from './add-survey-controller'
 import { ServerError } from '../errors'
 import { HttpRequest, Validation } from '../protocols'
-import { AddSurveyController } from './add-survey-controller'
+import { AddSurvey, AddSurveyModel } from '../../domain/usecases'
 
 class ValidationStub implements Validation {
   validate (input: any): Error {

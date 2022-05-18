@@ -1,9 +1,8 @@
 import { SignUpController } from './signup-controller'
 import { EmailInUseError, ServerError } from '../errors'
-import { AddAccount, AddAccountModel } from '../../domain/usecases/add-account'
-import { AccountModel } from '../../domain/models/account'
 import { HttpRequest, Validation } from '../protocols'
-import { Authentication, AuthenticationModel } from '../../domain/usecases/authentication'
+import { AccountModel } from '../../domain/models'
+import { AddAccount, AddAccountModel, Authentication, AuthenticationModel } from '../../domain/usecases'
 
 class AddAccountStub implements AddAccount {
   async add (account: AddAccountModel): Promise<AccountModel> {

@@ -1,7 +1,7 @@
 import { LoadSurveysController } from './load-surveys-controller'
 import { ServerError } from '../errors'
-import { LoadSurveys } from '../../domain/usecases/load-surveys'
-import { SurveyModel } from '../../domain/models/survey'
+import { LoadSurveys } from '../../domain/usecases'
+import { SurveyModel } from '../../domain/models'
 
 describe('LoadSurveys Controller', () => {
   class LoadSurveysStub implements LoadSurveys {
