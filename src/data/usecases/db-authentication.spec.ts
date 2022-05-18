@@ -1,7 +1,7 @@
-import { AccountModel } from '../../domain/models/account'
-import { AuthenticationModel } from '../../domain/usecases/authentication'
-import { Encrypter, HashComparer, LoadAccountByEmailRepository, UpdateAccessTokenRepository } from '../protocols'
 import { DbAuthentication } from './db-authentication'
+import { Encrypter, HashComparer, LoadAccountByEmailRepository, UpdateAccessTokenRepository } from '../protocols'
+import { AccountModel } from '../../domain/models'
+import { AuthenticationModel } from '../../domain/usecases'
 
 class LoadAccountByEmailRepositoryStub implements LoadAccountByEmailRepository {
   async loadByEmail (email: string): Promise<AccountModel> {

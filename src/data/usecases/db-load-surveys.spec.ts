@@ -1,7 +1,7 @@
 import { DbLoadSurveys } from './db-load-surveys'
-import { SurveyModel } from '../../domain/models/survey'
-import { LoadSurveys } from '../../domain/usecases/load-surveys'
-import { LoadSurveysRepository } from '../protocols/db/survey/load-surveys-repository'
+import { LoadSurveysRepository } from '../protocols'
+import { SurveyModel } from '../../domain/models'
+import { LoadSurveys } from '../../domain/usecases'
 
 class LoadSurveysRepositoryStub implements LoadSurveysRepository {
   async loadAll (): Promise<SurveyModel[]> {
