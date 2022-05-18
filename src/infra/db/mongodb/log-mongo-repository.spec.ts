@@ -1,6 +1,6 @@
-import { Collection } from 'mongodb'
-import { MongoHelper } from './mongo-helper'
 import { LogMongoRepository } from './log-mongo-repository'
+import { MongoHelper } from './mongo-helper'
+import { Collection } from 'mongodb'
 
 describe('Log Mongo Repository', () => {
   let errorCollection: Collection
