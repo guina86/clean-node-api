@@ -26,6 +26,10 @@ export const MongoHelper = {
     return { ...rest, id: _id.toHexString() }
   },
 
+  mapArray (data: any[]): any[] {
+    return data.map(item => MongoHelper.map(item))
+  },
+
   to_id (id: string): ObjectId {
     return ObjectId.createFromHexString(id)
   }

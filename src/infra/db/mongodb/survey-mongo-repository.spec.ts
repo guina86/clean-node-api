@@ -46,8 +46,9 @@ describe('Survey Mongo Repository', () => {
       await surveyCollection.insertMany(makeFakeSurveys(3))
       const surveys = await sut.loadAll()
       expect(surveys).toHaveLength(3)
-      expect(surveys[0].question).toBe('question')
-      expect(surveys[1].date).toEqual(new Date('2022-1-1'))
+      expect(surveys[0].id).toBeTruthy()
+      expect(surveys[1].question).toBe('question')
+      expect(surveys[2].date).toEqual(new Date('2022-1-1'))
     })
 
     it('should load empty list', async () => {
@@ -64,6 +65,7 @@ describe('Survey Mongo Repository', () => {
       const id = result.insertedId.toHexString()
       const survey = await sut.loadById(id)
       expect(survey).toBeTruthy()
+      expect(survey.id).toBeTruthy()
       expect(survey.id).toBe(id)
       expect(survey.question).toBe('question')
     })

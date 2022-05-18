@@ -5,9 +5,10 @@ import { AddAccountModel } from '../../../domain/usecases'
 
 export class AccountMongorepository implements AddAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadAccountByTokenRepository {
   async add (accountData: AddAccountModel): Promise<AccountModel> {
+    const data = { ...accountData } // copy made to avoid side effects. insertOne mutates the original object
     const accountCollection = await MongoHelper.getCollection('accounts')
-    await accountCollection.insertOne(accountData)
-    return MongoHelper.map(accountData)
+    await accountCollection.insertOne(data)
+    return MongoHelper.map(data)
   }
 
   async loadByEmail (email: string): Promise<AccountModel> {
