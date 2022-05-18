@@ -1,6 +1,6 @@
-import { DbLoadSurveys } from '../../../data/usecases/db-load-surveys'
-import { LoadSurveys } from '../../../domain/usecases/load-surveys'
-import { SurveyMongorepository } from '../../../infra/db/mongodb/survey-mongo-repository'
+import { DbLoadSurveys } from '../../../data/usecases'
+import { LoadSurveys } from '../../../domain/usecases'
+import { SurveyMongorepository } from '../../../infra/db/mongodb'
 
 export const makeDbLoadSurveys = (): LoadSurveys => {
   const surveyMongoRepository = new SurveyMongorepository()
