@@ -1,12 +1,11 @@
 import { SurveyMongorepository } from './survey-mongo-repository'
 import { MongoHelper } from './mongo-helper'
-import { SurveyModel } from '../../../domain/models'
 import { Collection } from 'mongodb'
+import { AddSurveyModel } from '../../../domain/usecases'
 
 let surveyCollection: Collection
 
-const makeFakeSurvey = (): SurveyModel => ({
-  id: 'id_',
+const makeFakeSurvey = (): AddSurveyModel => ({
   question: 'question',
   answers: [
     { image: 'imagea.png', answer: 'answer A' },
@@ -16,7 +15,7 @@ const makeFakeSurvey = (): SurveyModel => ({
   date: new Date('2022-1-1')
 })
 
-const makeFakeSurveys = (n: number): SurveyModel[] => [...Array(n)].map(() => makeFakeSurvey())
+const makeFakeSurveys = (n: number): AddSurveyModel[] => [...Array(n)].map(() => makeFakeSurvey())
 
 describe('Survey Mongo Repository', () => {
   beforeAll(async () => {
@@ -55,6 +54,18 @@ describe('Survey Mongo Repository', () => {
       const sut = new SurveyMongorepository()
       const surveys = await sut.loadAll()
       expect(surveys).toHaveLength(0)
+    })
+  })
+
+  describe('loadById()', () => {
+    it('should load a survey on success', async () => {
+      const sut = new SurveyMongorepository()
+      const result = await surveyCollection.insertOne(makeFakeSurvey())
+      const id = result.insertedId.toHexString()
+      const survey = await sut.loadById(id)
+      expect(survey).toBeTruthy()
+      expect(survey.id).toBe(id)
+      expect(survey.question).toBe('question')
     })
   })
 })
