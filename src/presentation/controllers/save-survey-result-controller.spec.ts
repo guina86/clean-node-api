@@ -1,6 +1,6 @@
 import { SaveSurveyResultController } from './save-survey-result-controller'
 import { HttpRequest } from '../protocols'
-import { LoadSurveyById, SaveSurveyResult, SaveSurveyResultModel } from '../../domain/usecases'
+import { LoadSurveyById, SaveSurveyResult, SaveSurveyResultParams } from '../../domain/usecases'
 import { SurveyModel, SurveyResultModel } from '../../domain/models'
 import { InvalidParamError, ServerError } from '../errors'
 
@@ -11,7 +11,7 @@ class LoadSurveyByIdStub implements LoadSurveyById {
 }
 
 class SaveSurveyResultStub implements SaveSurveyResult {
-  async save (data: SaveSurveyResultModel): Promise<SurveyResultModel> {
+  async save (data: SaveSurveyResultParams): Promise<SurveyResultModel> {
     return makeFakeSurveyResult()
   }
 }

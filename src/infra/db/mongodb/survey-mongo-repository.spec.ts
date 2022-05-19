@@ -1,11 +1,11 @@
 import { SurveyMongorepository } from './survey-mongo-repository'
 import { MongoHelper } from './mongo-helper'
 import { Collection } from 'mongodb'
-import { AddSurveyModel } from '../../../domain/usecases'
+import { AddSurveyParams } from '../../../domain/usecases'
 
 let surveyCollection: Collection
 
-const makeFakeSurvey = (): AddSurveyModel => ({
+const makeFakeSurvey = (): AddSurveyParams => ({
   question: 'question',
   answers: [
     { image: 'imagea.png', answer: 'answer A' },
@@ -15,7 +15,7 @@ const makeFakeSurvey = (): AddSurveyModel => ({
   date: new Date('2022-1-1')
 })
 
-const makeFakeSurveys = (n: number): AddSurveyModel[] => [...Array(n)].map(() => makeFakeSurvey())
+const makeFakeSurveys = (n: number): AddSurveyParams[] => [...Array(n)].map(() => makeFakeSurvey())
 
 describe('Survey Mongo Repository', () => {
   beforeAll(async () => {

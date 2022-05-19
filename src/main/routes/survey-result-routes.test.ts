@@ -4,12 +4,12 @@ import { MongoHelper } from '../../infra/db/mongodb'
 import { sign } from 'jsonwebtoken'
 import env from '../config/env'
 import { Collection } from 'mongodb'
-import { AddSurveyModel } from '../../domain/usecases'
+import { AddSurveyParams } from '../../domain/usecases'
 
 let surveyCollection: Collection
 let accountCollection: Collection
 
-const makeFakeSurvey = (): AddSurveyModel => ({
+const makeFakeSurvey = (): AddSurveyParams => ({
   question: 'question',
   answers: [
     { image: 'imagea.png', answer: 'answer A' },

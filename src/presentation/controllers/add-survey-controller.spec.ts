@@ -1,7 +1,7 @@
 import { AddSurveyController } from './add-survey-controller'
 import { ServerError } from '../errors'
 import { HttpRequest, Validation } from '../protocols'
-import { AddSurvey, AddSurveyModel } from '../../domain/usecases'
+import { AddSurvey, AddSurveyParams } from '../../domain/usecases'
 
 class ValidationStub implements Validation {
   validate (input: any): Error {
@@ -10,7 +10,7 @@ class ValidationStub implements Validation {
 }
 
 class AddSurveyStub implements AddSurvey {
-  async add (data: AddSurveyModel): Promise<void> {
+  async add (data: AddSurveyParams): Promise<void> {
     return undefined
   }
 }

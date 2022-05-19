@@ -1,10 +1,10 @@
 import { MongoHelper } from './mongo-helper'
 import { AddAccountRepository, LoadAccountByEmailRepository, LoadAccountByTokenRepository, UpdateAccessTokenRepository } from '../../../data/protocols'
 import { AccountModel } from '../../../domain/models'
-import { AddAccountModel } from '../../../domain/usecases'
+import { AddAccountParams } from '../../../domain/usecases'
 
 export class AccountMongorepository implements AddAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadAccountByTokenRepository {
-  async add (accountData: AddAccountModel): Promise<AccountModel> {
+  async add (accountData: AddAccountParams): Promise<AccountModel> {
     const data = { ...accountData } // copy made to avoid side effects. insertOne mutates the original object
     const accountCollection = await MongoHelper.getCollection('accounts')
     await accountCollection.insertOne(data)

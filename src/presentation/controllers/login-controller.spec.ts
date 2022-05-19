@@ -1,10 +1,10 @@
 import { LoginController } from './login-controller'
 import { ServerError, UnauthorizedError } from '../errors'
 import { HttpRequest, Validation } from '../protocols'
-import { Authentication, AuthenticationModel } from '../../domain/usecases'
+import { Authentication, AuthenticationParams } from '../../domain/usecases'
 
 class AuthenticationStub implements Authentication {
-  async auth (authentication: AuthenticationModel): Promise<string> {
+  async auth (authentication: AuthenticationParams): Promise<string> {
     return 'any_token'
   }
 }

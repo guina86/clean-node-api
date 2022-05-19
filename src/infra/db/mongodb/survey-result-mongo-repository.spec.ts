@@ -1,5 +1,5 @@
 import { SurveyResultMongoRepository } from './survey-result-mongo-repository'
-import { SaveSurveyResultModel } from '../../../domain/usecases'
+import { SaveSurveyResultParams } from '../../../domain/usecases'
 import { MongoHelper } from './mongo-helper'
 import { Collection } from 'mongodb'
 
@@ -7,7 +7,7 @@ let surveyCollection: Collection
 let surveyResultCollection: Collection
 let accountCollection: Collection
 
-const makeFakeSurveyResult = (surveyId: string, accountId: string): SaveSurveyResultModel => ({
+const makeFakeSurveyResult = (surveyId: string, accountId: string): SaveSurveyResultParams => ({
   surveyId,
   accountId,
   answer: 'answer B',

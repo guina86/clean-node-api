@@ -2,10 +2,10 @@ import { SignUpController } from './signup-controller'
 import { EmailInUseError, ServerError } from '../errors'
 import { HttpRequest, Validation } from '../protocols'
 import { AccountModel } from '../../domain/models'
-import { AddAccount, AddAccountModel, Authentication, AuthenticationModel } from '../../domain/usecases'
+import { AddAccount, AddAccountParams, Authentication, AuthenticationParams } from '../../domain/usecases'
 
 class AddAccountStub implements AddAccount {
-  async add (account: AddAccountModel): Promise<AccountModel> {
+  async add (account: AddAccountParams): Promise<AccountModel> {
     return makeFakeAccount()
   }
 }
@@ -17,7 +17,7 @@ class ValidationStub implements Validation {
 }
 
 class AuthenticationStub implements Authentication {
-  async auth (authentication: AuthenticationModel): Promise<string> {
+  async auth (authentication: AuthenticationParams): Promise<string> {
     return 'any_token'
   }
 }
@@ -61,7 +61,7 @@ describe('SignUp Controller', () => {
 
   it('should return 500 if AddAccount throws', async () => {
     const sut = makeSut()
-    jest.spyOn(addAccountStub, 'add').mockImplementationOnce(async (account: AddAccountModel) => {
+    jest.spyOn(addAccountStub, 'add').mockImplementationOnce(async (account: AddAccountParams) => {
       throw new Error()
     })
     const httpRequest = makeFakeRequest()
