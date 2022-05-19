@@ -3,21 +3,15 @@ import { AccessDeniedError, ServerError } from '../errors'
 import { HttpRequest, Middleware } from '../protocols'
 import { AccountModel } from '../../domain/models'
 import { LoadAccountByToken } from '../../domain/usecases'
+import { mockAccountModel } from '../../domain/test'
 
 class LoadAccountByTokenStub implements LoadAccountByToken {
   async load (accessToken: string, role?: string): Promise<AccountModel> {
-    return makeFakeAccount()
+    return mockAccountModel()
   }
 }
 
 const loadAccountByTokenStub = new LoadAccountByTokenStub()
-
-const makeFakeAccount = (): AccountModel => ({
-  id: 'valid_id',
-  name: 'valid_name',
-  email: 'valid_email@mail.com',
-  password: 'hashed_password'
-})
 
 const makeFakeRequest = (): HttpRequest => ({
   headers: {
@@ -56,7 +50,7 @@ describe('Auth MIddleware', () => {
     const sut = makeSut()
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse.statusCode).toBe(200)
-    expect(httpResponse.body).toEqual({ accountId: 'valid_id' })
+    expect(httpResponse.body).toEqual({ accountId: 'any_id' })
   })
 
   it('should call LoadAccountByToken with correct acessToken and role', async () => {

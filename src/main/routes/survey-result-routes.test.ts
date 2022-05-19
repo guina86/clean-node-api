@@ -1,23 +1,13 @@
 import request from 'supertest'
 import app from '../config/app'
+import env from '../config/env'
+import { mockSurveyParams } from '../../domain/test'
 import { MongoHelper } from '../../infra/db/mongodb'
 import { sign } from 'jsonwebtoken'
-import env from '../config/env'
 import { Collection } from 'mongodb'
-import { AddSurveyParams } from '../../domain/usecases'
 
 let surveyCollection: Collection
 let accountCollection: Collection
-
-const makeFakeSurvey = (): AddSurveyParams => ({
-  question: 'question',
-  answers: [
-    { image: 'imagea.png', answer: 'answer A' },
-    { image: 'imageb.png', answer: 'answer B' },
-    { image: 'imagec.png', answer: 'answer C' }
-  ],
-  date: new Date('2022-1-1')
-})
 
 const makeAccessToken = async (role?: string): Promise<string> => {
   const res = await accountCollection.insertOne({
@@ -64,7 +54,7 @@ describe('Survey Result Routes', () => {
 
     it('should return 200 on save survey result with accessToken', async () => {
       const accessToken = await makeAccessToken()
-      const res = await surveyCollection.insertOne(makeFakeSurvey())
+      const res = await surveyCollection.insertOne(mockSurveyParams())
       const surveyId = res.insertedId.toHexString()
       await request(app)
         .put(`/api/surveys/${surveyId}/results`)

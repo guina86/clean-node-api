@@ -1,21 +1,9 @@
 import { SurveyMongorepository } from './survey-mongo-repository'
 import { MongoHelper } from './mongo-helper'
 import { Collection } from 'mongodb'
-import { AddSurveyParams } from '../../../domain/usecases'
+import { mockSurveyModel, mockSurveyModelArray } from '../../../domain/test'
 
 let surveyCollection: Collection
-
-const makeFakeSurvey = (): AddSurveyParams => ({
-  question: 'question',
-  answers: [
-    { image: 'imagea.png', answer: 'answer A' },
-    { image: 'imageb.png', answer: 'answer B' },
-    { image: 'imagec.png', answer: 'answer C' }
-  ],
-  date: new Date('2022-1-1')
-})
-
-const makeFakeSurveys = (n: number): AddSurveyParams[] => [...Array(n)].map(() => makeFakeSurvey())
 
 describe('Survey Mongo Repository', () => {
   beforeAll(async () => {
@@ -34,8 +22,8 @@ describe('Survey Mongo Repository', () => {
   describe('add()', () => {
     it('should add a survey on success', async () => {
       const sut = new SurveyMongorepository()
-      await sut.add(makeFakeSurvey())
-      const survey = await surveyCollection.findOne({ question: 'question' })
+      await sut.add(mockSurveyModel())
+      const survey = await surveyCollection.findOne({ question: 'question 1' })
       expect(survey).toBeTruthy()
     })
   })
@@ -43,11 +31,11 @@ describe('Survey Mongo Repository', () => {
   describe('loadAll()', () => {
     it('should load all surveys on success', async () => {
       const sut = new SurveyMongorepository()
-      await surveyCollection.insertMany(makeFakeSurveys(3))
+      await surveyCollection.insertMany(mockSurveyModelArray(3))
       const surveys = await sut.loadAll()
       expect(surveys).toHaveLength(3)
       expect(surveys[0].id).toBeTruthy()
-      expect(surveys[1].question).toBe('question')
+      expect(surveys[1].question).toBe('question 2')
       expect(surveys[2].date).toEqual(new Date('2022-1-1'))
     })
 
@@ -61,13 +49,13 @@ describe('Survey Mongo Repository', () => {
   describe('loadById()', () => {
     it('should load a survey on success', async () => {
       const sut = new SurveyMongorepository()
-      const result = await surveyCollection.insertOne(makeFakeSurvey())
+      const result = await surveyCollection.insertOne(mockSurveyModel())
       const id = result.insertedId.toHexString()
       const survey = await sut.loadById(id)
       expect(survey).toBeTruthy()
       expect(survey.id).toBeTruthy()
       expect(survey.id).toBe(id)
-      expect(survey.question).toBe('question')
+      expect(survey.question).toBe('question 1')
     })
   })
 })

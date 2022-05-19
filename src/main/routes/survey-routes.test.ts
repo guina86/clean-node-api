@@ -1,26 +1,13 @@
 import request from 'supertest'
 import app from '../config/app'
 import env from '../config/env'
-import { SurveyModel } from '../../domain/models'
 import { MongoHelper } from '../../infra/db/mongodb'
+import { mockSurveyModel, mockSurveyModelArray } from '../../domain/test'
 import { sign } from 'jsonwebtoken'
 import { Collection } from 'mongodb'
 
 let surveyCollection: Collection
 let accountCollection: Collection
-
-const makeFakeSurvey = (): SurveyModel => ({
-  id: 'id_',
-  question: 'question',
-  answers: [
-    { image: 'imagea.png', answer: 'answer A' },
-    { image: 'imageb.png', answer: 'answer B' },
-    { image: 'imagec.png', answer: 'answer C' }
-  ],
-  date: new Date('2022-1-1')
-})
-
-const makeFakeSurveys = (n: number): SurveyModel[] => [...Array(n)].map(() => makeFakeSurvey())
 
 const makeAccessToken = async (role?: string): Promise<string> => {
   const res = await accountCollection.insertOne({
@@ -61,7 +48,7 @@ describe('Login Routes', () => {
     it('should return 403 on add survey without accessToken', async () => {
       await request(app)
         .post('/api/surveys')
-        .send(makeFakeSurvey())
+        .send(mockSurveyModel())
         .expect(403)
     })
 
@@ -70,7 +57,7 @@ describe('Login Routes', () => {
       await request(app)
         .post('/api/surveys')
         .set('x-access-token', accessToken)
-        .send(makeFakeSurvey())
+        .send(mockSurveyModel())
         .expect(204)
     })
   })
@@ -84,7 +71,7 @@ describe('Login Routes', () => {
 
     it('should return 200 on load survey with valid accessToken', async () => {
       const accessToken = await makeAccessToken()
-      await surveyCollection.insertMany(makeFakeSurveys(4))
+      await surveyCollection.insertMany(mockSurveyModelArray(4))
       await request(app)
         .get('/api/surveys')
         .set('x-access-token', accessToken)

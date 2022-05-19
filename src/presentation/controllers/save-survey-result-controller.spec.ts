@@ -1,42 +1,8 @@
 import { SaveSurveyResultController } from './save-survey-result-controller'
-import { HttpRequest } from '../protocols'
-import { LoadSurveyById, SaveSurveyResult, SaveSurveyResultParams } from '../../domain/usecases'
-import { SurveyModel, SurveyResultModel } from '../../domain/models'
 import { InvalidParamError, ServerError } from '../errors'
-
-class LoadSurveyByIdStub implements LoadSurveyById {
-  async load (id: string): Promise<SurveyModel> {
-    return makeFakeSurvey()
-  }
-}
-
-class SaveSurveyResultStub implements SaveSurveyResult {
-  async save (data: SaveSurveyResultParams): Promise<SurveyResultModel> {
-    return makeFakeSurveyResult()
-  }
-}
-
-const loadSurveyByIdStub = new LoadSurveyByIdStub()
-const saveSurveyResultStub = new SaveSurveyResultStub()
-
-const makeFakeSurvey = (): SurveyModel => ({
-  id: 'any_id',
-  question: 'question',
-  answers: [
-    { image: 'imagea.png', answer: 'answer A' },
-    { image: 'imageb.png', answer: 'answer B' },
-    { image: 'imagec.png', answer: 'answer C' }
-  ],
-  date: new Date('2022-1-1')
-})
-
-const makeFakeSurveyResult = (): SurveyResultModel => ({
-  id: 'any_id',
-  surveyId: 'any_survey_id',
-  accountId: 'any_account_id',
-  answer: 'answer A',
-  date: new Date('2022-1-1')
-})
+import { HttpRequest } from '../protocols'
+import { mockLoadSurveyById, mockSaveSurveyResult } from '../test'
+import { mockSurveyResultModel } from '../../domain/test'
 
 const makeFakeRequest = (): HttpRequest => ({
   params: {
@@ -47,6 +13,9 @@ const makeFakeRequest = (): HttpRequest => ({
   },
   accountId: 'any_account_id'
 })
+
+const loadSurveyByIdStub = mockLoadSurveyById()
+const saveSurveyResultStub = mockSaveSurveyResult()
 
 const makeSut = (): SaveSurveyResultController => new SaveSurveyResultController(loadSurveyByIdStub, saveSurveyResultStub)
 
@@ -108,6 +77,6 @@ describe('SaveSurveyResultController', () => {
     const sut = makeSut()
     const res = await sut.handle(makeFakeRequest())
     expect(res.statusCode).toBe(200)
-    expect(res.body).toEqual(makeFakeSurveyResult())
+    expect(res.body).toEqual(mockSurveyResultModel())
   })
 })

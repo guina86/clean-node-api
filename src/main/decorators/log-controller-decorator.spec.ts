@@ -1,17 +1,11 @@
 import { LogControllerDecorator } from './log-controller-decorator'
-import { LogErrorRepository } from '../../data/protocols'
 import { serverError } from '../../presentation/helpers'
 import { Controller, HttpRequest, HttpResponse } from '../../presentation/protocols'
+import { mockLogErrorRepository } from '../../data/test'
 
 class ControllerStub implements Controller {
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     return makeFakeResponse()
-  }
-}
-
-class LogErrorRepositoryStub implements LogErrorRepository {
-  async logError (stack: string): Promise<void> {
-
   }
 }
 
@@ -41,7 +35,7 @@ const makeFakeServerError = (): HttpResponse => {
 }
 
 const controllerStub = new ControllerStub()
-const logErrorRepositoryStub = new LogErrorRepositoryStub()
+const logErrorRepositoryStub = mockLogErrorRepository()
 
 describe('LogController Decorator', () => {
   it('should call controller handle', async () => {

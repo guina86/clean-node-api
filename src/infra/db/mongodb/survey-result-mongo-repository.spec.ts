@@ -1,38 +1,19 @@
 import { SurveyResultMongoRepository } from './survey-result-mongo-repository'
-import { SaveSurveyResultParams } from '../../../domain/usecases'
 import { MongoHelper } from './mongo-helper'
 import { Collection } from 'mongodb'
+import { mockAccountParams, mockSurveyParams, mockSurveyResultParams } from '../../../domain/test'
 
 let surveyCollection: Collection
 let surveyResultCollection: Collection
 let accountCollection: Collection
 
-const makeFakeSurveyResult = (surveyId: string, accountId: string): SaveSurveyResultParams => ({
-  surveyId,
-  accountId,
-  answer: 'answer B',
-  date: new Date('2022-1-1')
-})
-
 const makeAccountId = async (): Promise<string> => {
-  const res = await accountCollection.insertOne({
-    name: 'valid_name',
-    email: 'valid_email@mail.com',
-    password: 'valid_password'
-  })
+  const res = await accountCollection.insertOne(mockAccountParams())
   return res.insertedId.toHexString()
 }
 
 const makeSurveyId = async (): Promise<string> => {
-  const res = await surveyCollection.insertOne({
-    question: 'question',
-    answers: [
-      { image: 'imagea.png', answer: 'answer A' },
-      { image: 'imageb.png', answer: 'answer B' },
-      { image: 'imagec.png', answer: 'answer C' }
-    ],
-    date: new Date('2022-1-1')
-  })
+  const res = await surveyCollection.insertOne(mockSurveyParams())
   return res.insertedId.toHexString()
 }
 
@@ -58,13 +39,13 @@ describe('SurveyResultMongoRepository', () => {
       const sut = new SurveyResultMongoRepository()
       const surveyId = await makeSurveyId()
       const accountId = await makeAccountId()
-      const surveyResultData = makeFakeSurveyResult(surveyId, accountId)
+      const surveyResultData = mockSurveyResultParams(surveyId, accountId)
       const surveyResult = await sut.save(surveyResultData)
       expect(surveyResult).toBeTruthy()
       expect(surveyResult.id).toBeTruthy()
       expect(surveyResult.surveyId).toBe(surveyId)
       expect(surveyResult.accountId).toBe(accountId)
-      expect(surveyResult.answer).toBe('answer B')
+      expect(surveyResult.answer).toBe('answer A')
       expect(surveyResult.date).toEqual(new Date('2022-1-1'))
     })
 
@@ -72,13 +53,13 @@ describe('SurveyResultMongoRepository', () => {
       const sut = new SurveyResultMongoRepository()
       const surveyId = await makeSurveyId()
       const accountId = await makeAccountId()
-      const surveyResultData = makeFakeSurveyResult(surveyId, accountId)
+      const surveyResultData = mockSurveyResultParams(surveyId, accountId)
       const res = await surveyResultCollection.insertOne(surveyResultData)
-      surveyResultData.answer = 'answer A'
+      surveyResultData.answer = 'answer B'
       surveyResultData.date = new Date('2022-1-2')
       const surveyResult = await sut.save(surveyResultData)
       expect(surveyResult.id).toBe(res.insertedId.toHexString())
-      expect(surveyResult.answer).toBe('answer A')
+      expect(surveyResult.answer).toBe('answer B')
       expect(surveyResult.date).toEqual(new Date('2022-1-2'))
     })
   })

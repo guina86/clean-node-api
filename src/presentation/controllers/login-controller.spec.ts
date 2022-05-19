@@ -1,22 +1,7 @@
 import { LoginController } from './login-controller'
 import { ServerError, UnauthorizedError } from '../errors'
-import { HttpRequest, Validation } from '../protocols'
-import { Authentication, AuthenticationParams } from '../../domain/usecases'
-
-class AuthenticationStub implements Authentication {
-  async auth (authentication: AuthenticationParams): Promise<string> {
-    return 'any_token'
-  }
-}
-
-class ValidationStub implements Validation {
-  validate (input: any): Error {
-    return null
-  }
-}
-
-const authenticationStub = new AuthenticationStub()
-const validationStub = new ValidationStub()
+import { HttpRequest } from '../protocols'
+import { mockAuthentication, mockValidation } from '../test'
 
 const makeFakeRequest = (): HttpRequest => ({
   body: {
@@ -25,14 +10,15 @@ const makeFakeRequest = (): HttpRequest => ({
   }
 })
 
+const authenticationStub = mockAuthentication()
+const validationStub = mockValidation()
+
 const makeSut = (): LoginController => new LoginController(authenticationStub, validationStub)
 
 describe('Login Controller', () => {
   it('should return 500 if Authentication throws', async () => {
     const sut = makeSut()
-    jest.spyOn(authenticationStub,'auth').mockImplementationOnce(async () => {
-      throw new Error()
-    })
+    jest.spyOn(authenticationStub,'auth').mockRejectedValueOnce(new Error())
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())

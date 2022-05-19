@@ -1,22 +1,7 @@
 import { AddSurveyController } from './add-survey-controller'
 import { ServerError } from '../errors'
-import { HttpRequest, Validation } from '../protocols'
-import { AddSurvey, AddSurveyParams } from '../../domain/usecases'
-
-class ValidationStub implements Validation {
-  validate (input: any): Error {
-    return null
-  }
-}
-
-class AddSurveyStub implements AddSurvey {
-  async add (data: AddSurveyParams): Promise<void> {
-    return undefined
-  }
-}
-
-const validationStub = new ValidationStub()
-const addSurveyStub = new AddSurveyStub()
+import { HttpRequest } from '../protocols'
+import { mockAddSurvey, mockValidation } from '../test'
 
 const makeFakeRequest = (): HttpRequest => ({
   body: {
@@ -26,6 +11,9 @@ const makeFakeRequest = (): HttpRequest => ({
     ]
   }
 })
+
+const validationStub = mockValidation()
+const addSurveyStub = mockAddSurvey()
 
 const makeSut = (): AddSurveyController => new AddSurveyController(validationStub, addSurveyStub)
 
