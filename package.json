@@ -2,6 +2,8 @@
   "name": "clean-node-api",
   "version": "1.7.0",
   "description": "",
+  "author": "Leandro Guina",
+  "license": "GPL-3.0-or-later",
   "main": "index.js",
   "scripts": {
     "start": "node dist/main/server.js",
