@@ -64,7 +64,8 @@ describe('SurveyResultMongoRepository', () => {
       expect(surveyResult).toBeTruthy()
       expect(surveyResult.surveyId).toBe(surveyId)
       expect(surveyResult.answers).toHaveLength(3)
-      expect(surveyResult.answers[0].answer).toBe('answer B')
+      expect(surveyResult.answers[0].count).toBe(0)
+      expect(surveyResult.answers[1].count).toBe(1)
     })
   })
 
@@ -89,6 +90,18 @@ describe('SurveyResultMongoRepository', () => {
       expect(surveyResult.answers[1].answer).toBe('answer B')
       expect(surveyResult.answers[1].percent).toBe(40)
       expect(surveyResult.answers[2].answer).toBe('answer C')
+      expect(surveyResult.answers[2].percent).toBe(0)
+    })
+
+    it('should load a surveyResult if no votes have been casted', async () => {
+      const sut = new SurveyResultMongoRepository()
+      const surveyId = await makeSurveyId()
+      const surveyResult = await sut.loadBySurveyId(surveyId)
+      expect(surveyResult).toBeTruthy()
+      expect(surveyResult.surveyId).toBe(surveyId)
+      expect(surveyResult.answers).toHaveLength(3)
+      expect(surveyResult.answers[0].percent).toBe(0)
+      expect(surveyResult.answers[1].percent).toBe(0)
       expect(surveyResult.answers[2].percent).toBe(0)
     })
   })
