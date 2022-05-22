@@ -23,11 +23,7 @@ export class SurveyResultMongoRepository implements SaveSurveyResultRepository, 
     return surveyResult
   }
 
-  async load (surveyId: string): Promise<SurveyResultModel> {
-    return null
-  }
-
-  private async loadBySurveyId (surveyId: string): Promise<SurveyResultModel> {
+  async loadBySurveyId (surveyId: string): Promise<SurveyResultModel> {
     const surveyResultCollection = await MongoHelper.getCollection('surveyResults')
     const query = new QueryBuilder()
       .match({

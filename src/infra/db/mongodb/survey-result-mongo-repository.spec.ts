@@ -34,6 +34,7 @@ describe('SurveyResultMongoRepository', () => {
     accountCollection = await MongoHelper.getCollection('accounts')
     await accountCollection.deleteMany({})
   })
+
   describe('save()', () => {
     it('should add a surveyResult if its new', async () => {
       const sut = new SurveyResultMongoRepository()
@@ -64,6 +65,31 @@ describe('SurveyResultMongoRepository', () => {
       expect(surveyResult.surveyId).toBe(surveyId)
       expect(surveyResult.answers).toHaveLength(3)
       expect(surveyResult.answers[0].answer).toBe('answer B')
+    })
+  })
+
+  describe('loadBySurveyId()', () => {
+    it('should load a surveyResult', async () => {
+      const sut = new SurveyResultMongoRepository()
+      const surveyId = await makeSurveyId()
+      const accountId = await makeAccountId()
+      await surveyResultCollection.insertMany([
+        mockSurveyResultObject(surveyId, accountId, 'answer A'),
+        mockSurveyResultObject(surveyId, accountId, 'answer B'),
+        mockSurveyResultObject(surveyId, accountId, 'answer B'),
+        mockSurveyResultObject(surveyId, accountId, 'answer A'),
+        mockSurveyResultObject(surveyId, accountId, 'answer A')
+      ])
+      const surveyResult = await sut.loadBySurveyId(surveyId)
+      expect(surveyResult).toBeTruthy()
+      expect(surveyResult.surveyId).toBe(surveyId)
+      expect(surveyResult.answers).toHaveLength(3)
+      expect(surveyResult.answers[0].answer).toBe('answer A')
+      expect(surveyResult.answers[0].percent).toBe(60)
+      expect(surveyResult.answers[1].answer).toBe('answer B')
+      expect(surveyResult.answers[1].percent).toBe(40)
+      expect(surveyResult.answers[2].answer).toBe('answer C')
+      expect(surveyResult.answers[2].percent).toBe(0)
     })
   })
 })
