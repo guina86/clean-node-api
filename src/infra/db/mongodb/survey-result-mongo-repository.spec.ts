@@ -1,7 +1,7 @@
 import { SurveyResultMongoRepository } from './survey-result-mongo-repository'
 import { MongoHelper } from './mongo-helper'
 import { Collection } from 'mongodb'
-import { mockAccountParams, mockSurveyParams, mockSurveyResultParams } from '../../../domain/test'
+import { mockAccountParams, mockSurveyParams, mockSurveyResultObject, mockSurveyResultParams } from '../../../domain/test'
 
 let surveyCollection: Collection
 let surveyResultCollection: Collection
@@ -39,13 +39,14 @@ describe('SurveyResultMongoRepository', () => {
       const sut = new SurveyResultMongoRepository()
       const surveyId = await makeSurveyId()
       const accountId = await makeAccountId()
-      const surveyResultData = mockSurveyResultParams(surveyId, accountId)
+      const surveyResultData = mockSurveyResultParams(surveyId, accountId, 'answer A')
       const surveyResult = await sut.save(surveyResultData)
       expect(surveyResult).toBeTruthy()
-      expect(surveyResult.id).toBeTruthy()
       expect(surveyResult.surveyId).toBe(surveyId)
-      expect(surveyResult.accountId).toBe(accountId)
-      expect(surveyResult.answer).toBe('answer A')
+      expect(surveyResult.answers).toHaveLength(1)
+      expect(surveyResult.answers[0].answer).toBe('answer A')
+      expect(surveyResult.answers[0].count).toBe(1)
+      expect(surveyResult.answers[0].percent).toBe(100)
       expect(surveyResult.date).toEqual(new Date('2022-1-1'))
     })
 
@@ -53,14 +54,12 @@ describe('SurveyResultMongoRepository', () => {
       const sut = new SurveyResultMongoRepository()
       const surveyId = await makeSurveyId()
       const accountId = await makeAccountId()
-      const surveyResultData = mockSurveyResultParams(surveyId, accountId)
-      const res = await surveyResultCollection.insertOne(surveyResultData)
-      surveyResultData.answer = 'answer B'
-      surveyResultData.date = new Date('2022-1-2')
-      const surveyResult = await sut.save(surveyResultData)
-      expect(surveyResult.id).toBe(res.insertedId.toHexString())
-      expect(surveyResult.answer).toBe('answer B')
-      expect(surveyResult.date).toEqual(new Date('2022-1-2'))
+      await surveyResultCollection.insertOne(mockSurveyResultObject(surveyId, accountId, 'answer A'))
+      const surveyResult = await sut.save(mockSurveyResultParams(surveyId, accountId, 'answer B'))
+      expect(surveyResult).toBeTruthy()
+      expect(surveyResult.surveyId).toBe(surveyId)
+      expect(surveyResult.answers).toHaveLength(1)
+      expect(surveyResult.answers[0].answer).toBe('answer B')
     })
   })
 })
