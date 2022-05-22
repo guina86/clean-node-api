@@ -2,6 +2,7 @@ import { LoadSurveyResultController } from './load-survey-result-controller'
 import { InvalidParamError, ServerError } from '../errors'
 import { HttpRequest } from '../protocols'
 import { mockLoadSurveyById, mockLoadSurveyResult } from '../test'
+import { mockSurveyResultModel } from '../../domain/test'
 
 const makeFakeRequest = (): HttpRequest => ({
   params: {
@@ -51,5 +52,12 @@ describe('LoadSurveyResult Controller', () => {
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
+  })
+
+  it('should return 200 on success', async () => {
+    const sut = makeSut()
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toEqual(mockSurveyResultModel())
   })
 })
