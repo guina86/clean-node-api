@@ -3,7 +3,7 @@ import { ServerError } from '../errors'
 import { HttpRequest } from '../protocols'
 import { mockAddSurvey, mockValidation } from '../test'
 
-const makeFakeRequest = (): HttpRequest => ({
+const mockRequest = (): HttpRequest => ({
   body: {
     question: 'any_question',
     answers: [
@@ -21,7 +21,7 @@ describe('AddSurvey Controller', () => {
   it('should call Validation with correct values', async () => {
     const validateSpy = jest.spyOn(validationStub, 'validate')
     const sut = makeSut()
-    const httpRequest = makeFakeRequest()
+    const httpRequest = mockRequest()
     await sut.handle(httpRequest)
     expect(validateSpy).toHaveBeenCalledWith(httpRequest.body)
   })
@@ -29,7 +29,7 @@ describe('AddSurvey Controller', () => {
   it('should return 400 if Validation fails', async () => {
     jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new Error())
     const sut = makeSut()
-    const httpRequest = makeFakeRequest()
+    const httpRequest = mockRequest()
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new Error())
@@ -38,7 +38,7 @@ describe('AddSurvey Controller', () => {
   it('should call AddSurvey with correct values', async () => {
     const addSpy = jest.spyOn(addSurveyStub, 'add')
     const sut = makeSut()
-    const httpRequest = makeFakeRequest()
+    const httpRequest = mockRequest()
     await sut.handle(httpRequest)
     expect(addSpy).toHaveBeenCalledWith({ ...httpRequest.body, date: expect.any(Date) })
   })
@@ -46,7 +46,7 @@ describe('AddSurvey Controller', () => {
   it('should return 500 if AddSurvey throws', async () => {
     jest.spyOn(addSurveyStub, 'add').mockRejectedValueOnce(new Error())
     const sut = makeSut()
-    const httpRequest = makeFakeRequest()
+    const httpRequest = mockRequest()
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError(new Error().stack))
@@ -54,7 +54,7 @@ describe('AddSurvey Controller', () => {
 
   it('should return 204 on success', async () => {
     const sut = makeSut()
-    const httpRequest = makeFakeRequest()
+    const httpRequest = mockRequest()
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(204)
     expect(httpResponse.body).toBeNull()
