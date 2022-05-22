@@ -1,11 +1,11 @@
 import { ObjectId } from 'mongodb'
-import { SaveSurveyResultRepository } from '../../../data/protocols'
+import { LoadSurveyResultRepository, SaveSurveyResultRepository } from '../../../data/protocols'
 import { SurveyResultModel } from '../../../domain/models'
 import { SaveSurveyResultParams } from '../../../domain/usecases'
 import { MongoHelper } from './mongo-helper'
 import { QueryBuilder } from './query-builder'
 
-export class SurveyResultMongoRepository implements SaveSurveyResultRepository {
+export class SurveyResultMongoRepository implements SaveSurveyResultRepository, LoadSurveyResultRepository {
   async save (data: SaveSurveyResultParams): Promise<SurveyResultModel> {
     const surveyResultCollection = await MongoHelper.getCollection('surveyResults')
     await surveyResultCollection.findOneAndUpdate({
@@ -21,6 +21,10 @@ export class SurveyResultMongoRepository implements SaveSurveyResultRepository {
     })
     const surveyResult = await this.loadBySurveyId(data.surveyId)
     return surveyResult
+  }
+
+  async load (surveyId: string): Promise<SurveyResultModel> {
+    return null
   }
 
   private async loadBySurveyId (surveyId: string): Promise<SurveyResultModel> {
