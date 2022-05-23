@@ -1,9 +1,16 @@
 import { SurveyMongorepository } from './survey-mongo-repository'
 import { MongoHelper } from './mongo-helper'
 import { Collection } from 'mongodb'
-import { mockSurveyModel, mockSurveyModelArray } from '../../../domain/test'
+import { mockAccountParams, mockSurveyModel, mockSurveyModelArray, mockSurveyResultObject } from '../../../domain/test'
 
 let surveyCollection: Collection
+let surveyResultCollection: Collection
+let accountCollection: Collection
+
+const makeAccountId = async (): Promise<string> => {
+  const res = await accountCollection.insertOne(mockAccountParams())
+  return res.insertedId.toHexString()
+}
 
 describe('Survey Mongo Repository', () => {
   beforeAll(async () => {
@@ -17,6 +24,10 @@ describe('Survey Mongo Repository', () => {
   beforeEach(async () => {
     surveyCollection = await MongoHelper.getCollection('surveys')
     await surveyCollection.deleteMany({})
+    surveyResultCollection = await MongoHelper.getCollection('surveyResults')
+    await surveyResultCollection.deleteMany({})
+    accountCollection = await MongoHelper.getCollection('accounts')
+    await accountCollection.deleteMany({})
   })
 
   describe('add()', () => {
@@ -31,17 +42,24 @@ describe('Survey Mongo Repository', () => {
   describe('loadAll()', () => {
     it('should load all surveys on success', async () => {
       const sut = new SurveyMongorepository()
-      await surveyCollection.insertMany(mockSurveyModelArray(3))
-      const surveys = await sut.loadAll()
+      const accountId = await makeAccountId()
+      const result = await surveyCollection.insertMany(mockSurveyModelArray(3))
+      const surveyId = result.insertedIds[0].toHexString()
+      await surveyResultCollection.insertOne(mockSurveyResultObject(surveyId, accountId, 'answer A'))
+      const surveys = await sut.loadAll(accountId)
       expect(surveys).toHaveLength(3)
       expect(surveys[0].id).toBeTruthy()
+      expect(surveys[0].didAnswer).toBe(true)
       expect(surveys[1].question).toBe('question 2')
+      expect(surveys[1].didAnswer).toBe(false)
       expect(surveys[2].date).toEqual(new Date('2022-1-1'))
+      expect(surveys[2].didAnswer).toBe(false)
     })
 
     it('should load empty list', async () => {
       const sut = new SurveyMongorepository()
-      const surveys = await sut.loadAll()
+      const accountId = await makeAccountId()
+      const surveys = await sut.loadAll(accountId)
       expect(surveys).toHaveLength(0)
     })
   })
