@@ -104,5 +104,11 @@ describe('SurveyResultMongoRepository', () => {
       expect(surveyResult.answers[1].percent).toBe(0)
       expect(surveyResult.answers[2].percent).toBe(0)
     })
+
+    it('should return null if an invalid surveyId is provided', async () => {
+      const sut = new SurveyResultMongoRepository()
+      const surveyResult = await sut.loadBySurveyId('628acb10c22bfab572304ec8')
+      expect(surveyResult).toBeNull()
+    })
   })
 })

@@ -35,7 +35,7 @@ export const mockSurveyResultParams = (surveyId: string = 'any_survey_id', accou
   date: new Date('2022-1-1')
 })
 
-export const mockSurveyResultObject = (surveyId: string = 'any_survey_id', accountId: string = 'any_account_id', answer: string = 'answer A'): any => ({
+export const mockSurveyResultObject = (surveyId: string, accountId: string, answer: string): any => ({
   surveyId: MongoHelper.to_id(surveyId),
   accountId: MongoHelper.to_id(accountId),
   answer,
