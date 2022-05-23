@@ -7,9 +7,10 @@ import { SaveSurveyResultParams } from '../../../domain/usecases'
 export class SurveyResultMongoRepository implements SaveSurveyResultRepository, LoadSurveyResultRepository {
   async save (data: SaveSurveyResultParams): Promise<SurveyResultModel> {
     const surveyResultCollection = await MongoHelper.getCollection('surveyResults')
+    const { surveyId, accountId } = data
     await surveyResultCollection.findOneAndUpdate({
-      surveyId: MongoHelper.to_id(data.surveyId),
-      accountId: MongoHelper.to_id(data.accountId)
+      surveyId: MongoHelper.to_id(surveyId),
+      accountId: MongoHelper.to_id(accountId)
     },{
       $set: {
         answer: data.answer,
@@ -18,11 +19,11 @@ export class SurveyResultMongoRepository implements SaveSurveyResultRepository, 
     },{
       upsert: true
     })
-    const surveyResult = await this.loadBySurveyId(data.surveyId)
+    const surveyResult = await this.loadBySurveyId(surveyId, accountId)
     return surveyResult
   }
 
-  async loadBySurveyId (surveyId: string): Promise<SurveyResultModel> {
+  async loadBySurveyId (surveyId: string, accountId: string): Promise<SurveyResultModel> {
     const surveysCollection = await MongoHelper.getCollection('surveys')
     const query = new QueryBuilder()
       .match({ _id: MongoHelper.to_id(surveyId) })
@@ -31,6 +32,10 @@ export class SurveyResultMongoRepository implements SaveSurveyResultRepository, 
         foreignField: 'surveyId',
         localField: '_id',
         as: 'votes'
+      })
+      .addFields({
+        accountAnswer: { $arrayElemAt: [{ $filter: { input: '$votes', cond: { $eq: ['$$this.accountId', MongoHelper.to_id(accountId)] } } }, 0] },
+        totalAnswers: { $size: '$votes' }
       })
       .project({
         _id: 0,
@@ -43,18 +48,17 @@ export class SurveyResultMongoRepository implements SaveSurveyResultRepository, 
             in: {
               $let: {
                 vars: {
-                  count: { $size: { $filter: { input: '$votes', cond: { $eq: ['$$this.answer', '$$item.answer'] } } } },
-                  total: { $size: '$votes' }
+                  count: { $size: { $filter: { input: '$votes', cond: { $eq: ['$$this.answer', '$$item.answer'] } } } }
                 },
                 in: {
                   image: '$$item.image',
                   answer: '$$item.answer',
                   count: '$$count',
-                  percent: { $cond: [{ $ne: ['$$total', 0] }, { $multiply: [{ $divide: ['$$count', '$$total'] }, 100] } , 0] }
+                  percent: { $round: { $cond: [{ $ne: ['$totalAnswers', 0] }, { $multiply: [{ $divide: ['$$count', '$totalAnswers'] }, 100] } , 0] } },
+                  isCurrentAccountAnswer: { $eq: ['$$item.answer', '$accountAnswer.answer'] }
                 }
               }
             }
-
           }
         },
         date: '$date'

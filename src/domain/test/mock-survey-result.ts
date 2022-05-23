@@ -10,19 +10,22 @@ export const mockSurveyResultModel = (): SurveyResultModel => ({
       image: 'imagea.png',
       answer: 'answer A',
       count: 7,
-      percent: 70
+      percent: 70,
+      isCurrentAccountAnswer: false
     },
     {
       image: 'imageb.png',
       answer: 'answer B',
       count: 2,
-      percent: 20
+      percent: 20,
+      isCurrentAccountAnswer: false
     },
     {
       image: 'imagec.png',
       answer: 'answer C',
       count: 1,
-      percent: 10
+      percent: 10,
+      isCurrentAccountAnswer: false
     }
   ],
   date: new Date('2022-1-1')

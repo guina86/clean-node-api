@@ -5,8 +5,9 @@ import { mockLoadSurveyById, mockLoadSurveyResult } from '../test'
 import { mockSurveyResultModel } from '../../domain/test'
 
 const mockRequest = (): HttpRequest => ({
+  accountId: 'any_account_id',
   params: {
-    surveyId: 'any_id'
+    surveyId: 'any_survey_id'
   }
 })
 
@@ -20,7 +21,7 @@ describe('LoadSurveyResult Controller', () => {
     const sut = makeSut()
     const loadSpy = jest.spyOn(loadSurveyByIdStub, 'load')
     await sut.handle(mockRequest())
-    expect(loadSpy).toHaveBeenCalledWith('any_id')
+    expect(loadSpy).toHaveBeenCalledWith('any_survey_id')
   })
 
   it('should return 403 if LoadSurveyById returns null', async () => {
@@ -39,11 +40,11 @@ describe('LoadSurveyResult Controller', () => {
     expect(httpResponse.body).toEqual(new ServerError())
   })
 
-  it('should call LoadSurveyResult with correct value', async () => {
+  it('should call LoadSurveyResult with correct values', async () => {
     const sut = makeSut()
     const loadSpy = jest.spyOn(loadSurveyResultStub, 'load')
     await sut.handle(mockRequest())
-    expect(loadSpy).toHaveBeenLastCalledWith('any_id')
+    expect(loadSpy).toHaveBeenLastCalledWith('any_survey_id', 'any_account_id')
   })
 
   it('should return 500 if LoadSurveyResult throws', async () => {
