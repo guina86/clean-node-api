@@ -3,6 +3,7 @@ import { MongoHelper } from '../infra/db/mongodb'
 
 MongoHelper.connect(env.mongoUrl)
   .then(async () => {
-    const app = (await import('./config/app')).default
+    const { setupApp } = (await import('./config/app'))
+    const app = await setupApp()
     app.listen(env.port, () => console.log('Sever running'))
   }).catch(console.error)
