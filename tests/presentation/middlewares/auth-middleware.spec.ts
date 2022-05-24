@@ -1,6 +1,6 @@
-import { AuthMiddleware } from '../../../src/presentation/middlewares'
+import { AuthMiddleware, AuthMiddlewareRequest } from '../../../src/presentation/middlewares'
 import { AccessDeniedError, ServerError } from '../../../src/presentation/errors'
-import { HttpRequest, Middleware } from '../../../src/presentation/protocols'
+import { Middleware } from '../../../src/presentation/protocols'
 import { AccountModel } from '../../../src/domain/models'
 import { LoadAccountByToken } from '../../../src/domain/usecases'
 import { mockAccountModel } from '../../domain/mocks'
@@ -13,10 +13,8 @@ class LoadAccountByTokenStub implements LoadAccountByToken {
 
 const loadAccountByTokenStub = new LoadAccountByTokenStub()
 
-const mockRequest = (): HttpRequest => ({
-  headers: {
-    'x-access-token': 'any_token'
-  }
+const mockRequest = (): AuthMiddlewareRequest => ({
+  accessToken: 'any_token'
 })
 
 const makeSut = (role?: string): Middleware => new AuthMiddleware(loadAccountByTokenStub, role)

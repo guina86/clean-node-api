@@ -1,15 +1,12 @@
-import { SignUpController } from '../../../src/presentation/controllers'
+import { SignUpController, SignUpControllerRequest } from '../../../src/presentation/controllers'
 import { EmailInUseError, ServerError } from '../../../src/presentation/errors'
-import { HttpRequest } from '../../../src/presentation/protocols'
 import { mockAddAccount, mockAuthentication, mockValidation } from '../mocks'
 
-const mockRequest = (): HttpRequest => ({
-  body: {
-    name: 'any_name',
-    email: 'any_email@mail.com',
-    password: 'any_password',
-    passwordConfirmation: 'any_password'
-  }
+const mockRequest = (): SignUpControllerRequest => ({
+  name: 'any_name',
+  email: 'any_email@mail.com',
+  password: 'any_password',
+  passwordConfirmation: 'any_password'
 })
 
 const addAccountStub = mockAddAccount()
@@ -34,8 +31,8 @@ describe('SignUp Controller', () => {
   it('should return 500 if AddAccount throws', async () => {
     const sut = makeSut()
     jest.spyOn(addAccountStub, 'add').mockRejectedValueOnce(new Error())
-    const httpRequest = mockRequest()
-    const httpResponse = await sut.handle(httpRequest)
+    const request = mockRequest()
+    const httpResponse = await sut.handle(request)
 
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
@@ -49,9 +46,9 @@ describe('SignUp Controller', () => {
     expect(httpResponse.body).toEqual(new ServerError())
   })
 
-  it('should return 403 if AddAccount return null', async () => {
+  it('should return 403 if AddAccount return false', async () => {
     const sut = makeSut()
-    jest.spyOn(addAccountStub, 'add').mockResolvedValueOnce(null)
+    jest.spyOn(addAccountStub, 'add').mockResolvedValueOnce(false)
     const httpResponse = await sut.handle(mockRequest())
 
     expect(httpResponse.statusCode).toBe(403)
@@ -69,10 +66,10 @@ describe('SignUp Controller', () => {
   it('should call Validation with correct values', async () => {
     const sut = makeSut()
     const validateSpy = jest.spyOn(validationStub, 'validate')
-    const httpRequest = mockRequest()
-    await sut.handle(httpRequest)
+    const request = mockRequest()
+    await sut.handle(request)
 
-    expect(validateSpy).toHaveBeenCalledWith(httpRequest.body)
+    expect(validateSpy).toHaveBeenCalledWith(request)
   })
 
   it('should return 400 if validation returns an error', async () => {

@@ -1,16 +1,11 @@
-import { SaveSurveyResultController } from '../../../src/presentation/controllers'
+import { SaveSurveyResultController, SaveSurveyResultControllerRequest } from '../../../src/presentation/controllers'
 import { InvalidParamError, ServerError } from '../../../src/presentation//errors'
-import { HttpRequest } from '../../../src/presentation/protocols'
 import { mockLoadSurveyById, mockSaveSurveyResult } from '../mocks'
 import { mockSurveyResultModel } from '../../domain/mocks'
 
-const mockRequest = (): HttpRequest => ({
-  params: {
-    surveyId: 'any_survey_id'
-  },
-  body: {
-    answer: 'answer A'
-  },
+const mockRequest = (): SaveSurveyResultControllerRequest => ({
+  surveyId: 'any_survey_id',
+  answer: 'answer A',
   accountId: 'any_account_id'
 })
 
@@ -53,9 +48,9 @@ describe('SaveSurveyResultController', () => {
 
   it('should return 403 invalid answer is provided', async () => {
     const sut = makeSut()
-    const httpRequest = mockRequest()
-    httpRequest.body.answer = 'invalid_answer'
-    const res = await sut.handle(httpRequest)
+    const request = mockRequest()
+    request.answer = 'invalid_answer'
+    const res = await sut.handle(request)
     expect(res.statusCode).toBe(403)
     expect(res.body).toEqual(new InvalidParamError('answer'))
   })

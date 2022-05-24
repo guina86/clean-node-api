@@ -1,10 +1,9 @@
-import { LoadSurveysController } from '../../../src/presentation/controllers'
+import { LoadSurveysController, LoadSurveysControllerRequest } from '../../../src/presentation/controllers'
 import { ServerError } from '../../../src/presentation/errors'
-import { HttpRequest } from '../../../src/presentation/protocols'
 import { mockLoadSurveys } from '../mocks'
 import { mockSurveyModelArray } from '../../domain/mocks'
 
-const mockRequest = (): HttpRequest => ({ accountId: 'any_id' })
+const mockRequest = (): LoadSurveysControllerRequest => ({ accountId: 'any_id' })
 
 const loadSurveysStub = mockLoadSurveys()
 

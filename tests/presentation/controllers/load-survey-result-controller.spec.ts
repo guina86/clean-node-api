@@ -1,14 +1,11 @@
 import { mockLoadSurveyById, mockLoadSurveyResult } from '../mocks'
 import { mockSurveyResultModel } from '../../domain/mocks'
-import { LoadSurveyResultController } from '../../../src/presentation/controllers'
+import { LoadSurveyResultController, LoadSurveyResultControllerRequest } from '../../../src/presentation/controllers'
 import { InvalidParamError, ServerError } from '../../../src/presentation/errors'
-import { HttpRequest } from '../../../src/presentation/protocols'
 
-const mockRequest = (): HttpRequest => ({
+const mockRequest = (): LoadSurveyResultControllerRequest => ({
   accountId: 'any_account_id',
-  params: {
-    surveyId: 'any_survey_id'
-  }
+  surveyId: 'any_survey_id'
 })
 
 const loadSurveyByIdStub = mockLoadSurveyById()

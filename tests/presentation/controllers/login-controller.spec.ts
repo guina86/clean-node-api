@@ -1,13 +1,10 @@
-import { LoginController } from '../../../src/presentation/controllers'
+import { LoginController, LoginControllerRequest } from '../../../src/presentation/controllers'
 import { ServerError, UnauthorizedError } from '../../../src/presentation/errors'
-import { HttpRequest } from '../../../src/presentation/protocols'
 import { mockAuthentication, mockValidation } from '../mocks'
 
-const mockRequest = (): HttpRequest => ({
-  body: {
-    email: 'any_email@mail.com',
-    password: 'any_password'
-  }
+const mockRequest = (): LoginControllerRequest => ({
+  email: 'any_email@mail.com',
+  password: 'any_password'
 })
 
 const authenticationStub = mockAuthentication()
@@ -49,17 +46,15 @@ describe('Login Controller', () => {
   it('should call Validation with correct values', async () => {
     const sut = makeSut()
     const validateSpy = jest.spyOn(validationStub, 'validate')
-    const httpRequest = mockRequest()
-    await sut.handle(httpRequest)
-
-    expect(validateSpy).toHaveBeenCalledWith(httpRequest.body)
+    const request = mockRequest()
+    await sut.handle(request)
+    expect(validateSpy).toHaveBeenCalledWith(request)
   })
 
   it('should return 400 if validation returns an error', async () => {
     const sut = makeSut()
     jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new Error('any_error'))
     const httpResponse = await sut.handle(mockRequest())
-
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new Error('any_error'))
   })

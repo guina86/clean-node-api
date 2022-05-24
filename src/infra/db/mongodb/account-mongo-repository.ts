@@ -4,11 +4,11 @@ import { AccountModel } from '../../../domain/models'
 import { AddAccountParams } from '../../../domain/usecases'
 
 export class AccountMongorepository implements AddAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadAccountByTokenRepository {
-  async add (accountData: AddAccountParams): Promise<AccountModel> {
-    const data = { ...accountData } // copy made to avoid side effects. insertOne mutates the original object
+  async add (accountData: AddAccountParams): Promise<boolean> {
+    const data = { ...accountData } // copy made to avoid side effects. insertOne mutates the parameter
     const accountCollection = await MongoHelper.getCollection('accounts')
-    await accountCollection.insertOne(data)
-    return MongoHelper.map(data)
+    const result = await accountCollection.insertOne(data)
+    return result.insertedId !== null
   }
 
   async loadByEmail (email: string): Promise<AccountModel> {
