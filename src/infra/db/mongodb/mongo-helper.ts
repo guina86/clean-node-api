@@ -23,7 +23,7 @@ export const MongoHelper = {
 
   map (data: any): any {
     const { _id, ...rest } = data
-    return { ...rest, id: _id.toHexString() }
+    return { id: _id.toHexString(), ...rest }
   },
 
   mapArray (data: any[]): any[] {

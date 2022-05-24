@@ -2,7 +2,7 @@ import request from 'supertest'
 import app from '../../../src/main/config/app'
 import env from '../../../src/main/config/env'
 import { MongoHelper } from '../../../src/infra/db/mongodb'
-import { mockSurveyModel, mockSurveyModelArray } from '../../domain/mocks'
+import { mockSurveyModel, mockSurveyParamsArray } from '../../domain/mocks'
 import { sign } from 'jsonwebtoken'
 import { Collection } from 'mongodb'
 
@@ -71,7 +71,7 @@ describe('Login Routes', () => {
 
     it('should return 200 on load survey with valid accessToken', async () => {
       const accessToken = await makeAccessToken()
-      await surveyCollection.insertMany(mockSurveyModelArray(4))
+      await surveyCollection.insertMany(mockSurveyParamsArray(4))
       await request(app)
         .get('/api/surveys')
         .set('x-access-token', accessToken)

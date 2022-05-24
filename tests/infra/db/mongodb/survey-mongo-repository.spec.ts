@@ -1,5 +1,5 @@
 import { SurveyMongorepository, MongoHelper } from '../../../../src/infra/db/mongodb'
-import { mockAccountParams, mockSurveyModel, mockSurveyModelArray, mockSurveyResultObject } from '../../../domain/mocks'
+import { mockAccountParams, mockSurveyModel, mockSurveyModelArray, mockSurveyParams, mockSurveyResultObject } from '../../../domain/mocks'
 import { Collection } from 'mongodb'
 
 let surveyCollection: Collection
@@ -66,7 +66,7 @@ describe('Survey Mongo Repository', () => {
   describe('loadById()', () => {
     it('should load a survey on success', async () => {
       const sut = new SurveyMongorepository()
-      const result = await surveyCollection.insertOne(mockSurveyModel())
+      const result = await surveyCollection.insertOne(mockSurveyParams())
       const id = result.insertedId.toHexString()
       const survey = await sut.loadById(id)
       expect(survey).toBeTruthy()
