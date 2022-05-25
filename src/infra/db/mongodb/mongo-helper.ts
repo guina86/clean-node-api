@@ -31,7 +31,7 @@ export const MongoHelper = {
   },
 
   to_id (id: string): ObjectId {
-    return ObjectId.createFromHexString(id)
+    return new ObjectId(id)
   }
 
 }
