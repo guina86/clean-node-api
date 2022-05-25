@@ -2,7 +2,10 @@ import { ApolloError, AuthenticationError, ForbiddenError, UserInputError } from
 import { Controller } from '../../presentation/protocols'
 
 export const adaptResolver = async (controller: Controller, args: any = {}, context?: any): Promise<any> => {
-  const request = { ...args }
+  const request = {
+    ...args,
+    accountId: context?.req?.accountId
+  }
   const httpResponse = await controller.handle(request)
   switch (httpResponse.statusCode) {
     case 200:
