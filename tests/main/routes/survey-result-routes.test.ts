@@ -1,34 +1,16 @@
 import request from 'supertest'
 import { setupApp } from '../../../src/main/config/app'
-import env from '../../../src/main/config/env'
 import { mockSurveyParams } from '../../domain/mocks'
 import { MongoHelper } from '../../../src/infra/db/mongodb'
-import { sign } from 'jsonwebtoken'
 import { Collection } from 'mongodb'
 import { Express } from 'express'
+import { mockAccessToken } from '../mocks'
 
 let surveyCollection: Collection
 let accountCollection: Collection
 let app: Express
 
-const makeAccessToken = async (role?: string): Promise<string> => {
-  const res = await accountCollection.insertOne({
-    name: 'Leandro',
-    email: 'email@mail.com',
-    password: '123',
-    role
-  })
-  const id = res.insertedId.toHexString()
-  const accessToken = sign({ id } , env.jwtSecret)
-  await accountCollection.updateOne({
-    _id: res.insertedId
-  },{
-    $set: {
-      accessToken
-    }
-  })
-  return accessToken
-}
+const makeAccessToken = async (role?: string): Promise<string> => mockAccessToken(surveyCollection, accountCollection, role)
 
 describe('Survey Result Routes', () => {
   beforeAll(async () => {
