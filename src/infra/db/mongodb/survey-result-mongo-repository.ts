@@ -6,7 +6,7 @@ import { SaveSurveyResultParams } from '../../../domain/usecases'
 
 export class SurveyResultMongoRepository implements SaveSurveyResultRepository, LoadSurveyResultRepository {
   async save (data: SaveSurveyResultParams): Promise<SurveyResultModel> {
-    const surveyResultCollection = await MongoHelper.getCollection('surveyResults')
+    const surveyResultCollection = MongoHelper.getCollection('surveyResults')
     const { surveyId, accountId } = data
     await surveyResultCollection.findOneAndUpdate({
       surveyId: MongoHelper.to_id(surveyId),
@@ -24,7 +24,7 @@ export class SurveyResultMongoRepository implements SaveSurveyResultRepository, 
   }
 
   async loadBySurveyId (surveyId: string, accountId: string): Promise<SurveyResultModel> {
-    const surveysCollection = await MongoHelper.getCollection('surveys')
+    const surveysCollection = MongoHelper.getCollection('surveys')
     const query = new QueryBuilder()
       .match({ _id: MongoHelper.to_id(surveyId) })
       .lookup({
@@ -65,10 +65,7 @@ export class SurveyResultMongoRepository implements SaveSurveyResultRepository, 
       })
       .build()
 
-    const surveyResult = await surveysCollection.aggregate(query).toArray()
-    if (!surveyResult.length) return null
-    const result = surveyResult[0]
-    result.surveyId = surveyId
-    return result as SurveyResultModel
+    const surveyResult = await surveysCollection.aggregate<SurveyResultModel>(query).toArray()
+    return surveyResult.length ? { ...surveyResult[0], surveyId } : null
   }
 }

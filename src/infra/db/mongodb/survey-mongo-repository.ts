@@ -7,12 +7,12 @@ import { QueryBuilder } from './query-builder'
 export class SurveyMongorepository implements AddSurveyRepository, LoadSurveysRepository, LoadSurveyByIdRepository {
   async add (surveyData: AddSurveyParams): Promise<void> {
     const data = { ...surveyData } // copy made to avoid side effects. insertOne mutates the parameter
-    const surveyCollection = await MongoHelper.getCollection('surveys')
+    const surveyCollection = MongoHelper.getCollection('surveys')
     await surveyCollection.insertOne(data)
   }
 
   async loadAll (accountId: string): Promise<SurveyModel[]> {
-    const surveyCollection = await MongoHelper.getCollection('surveys')
+    const surveyCollection = MongoHelper.getCollection('surveys')
 
     const query = new QueryBuilder()
       .lookup({
@@ -47,7 +47,7 @@ export class SurveyMongorepository implements AddSurveyRepository, LoadSurveysRe
   }
 
   async loadById (id: string): Promise<SurveyModel> {
-    const surveyCollection = await MongoHelper.getCollection('surveys')
+    const surveyCollection = MongoHelper.getCollection('surveys')
     const survey = await surveyCollection.findOne({ _id: MongoHelper.to_id(id) })
     return survey && MongoHelper.map(survey)
   }
