@@ -10,7 +10,7 @@ let surveyCollection: Collection
 let accountCollection: Collection
 let app: Express
 
-const makeAccessToken = async (role?: string): Promise<string> => mockAccessToken(surveyCollection, accountCollection, role)
+const makeAccessToken = async (role?: string): Promise<string> => mockAccessToken(accountCollection, role)
 
 describe('Survey Result Routes', () => {
   beforeAll(async () => {

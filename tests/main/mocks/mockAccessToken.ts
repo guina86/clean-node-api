@@ -2,7 +2,7 @@ import env from '../../../src/main/config/env'
 import { Collection } from 'mongodb'
 import { sign } from 'jsonwebtoken'
 
-export const mockAccessToken = async (surveyCollection: Collection, accountCollection: Collection, role?: string): Promise<string> => {
+export const mockAccessToken = async (accountCollection: Collection, role?: string): Promise<string> => {
   const res = await accountCollection.insertOne({
     name: 'Leandro',
     email: 'email@mail.com',
