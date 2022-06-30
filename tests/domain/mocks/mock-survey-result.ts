@@ -1,6 +1,6 @@
-import { MongoHelper } from '../../../src/infra/db/mongodb'
-import { SurveyResultModel } from '../../../src/domain/models'
-import { SaveSurveyResultParams } from '../../../src/domain/usecases'
+import { MongoHelper } from '@infra/db/mongodb'
+import { SurveyResultModel } from '@domain/models'
+import { SaveSurveyResultParams } from '@domain/usecases'
 
 export const mockSurveyResultModel = (): SurveyResultModel => ({
   surveyId: 'any_survey_id',
