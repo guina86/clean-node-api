@@ -4,7 +4,7 @@ import { LoadSurveys } from '@domain/usecases'
 import { mockSurveyModelArray } from '@tests/domain/mocks'
 import { mock } from 'jest-mock-extended'
 
-describe('DbLoadSurveys', () => {
+describe('DbLoadSurveys Usecase', () => {
   const makeSut = (): LoadSurveys => new DbLoadSurveys(loadSurveysRepositoryStub)
   const loadSurveysRepositoryStub = mock<LoadSurveysRepository>()
 

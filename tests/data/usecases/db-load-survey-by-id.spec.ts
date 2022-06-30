@@ -3,7 +3,7 @@ import { LoadSurveyByIdRepository } from '@data/protocols'
 import { mockSurveyModel } from '@tests/domain/mocks'
 import { mock } from 'jest-mock-extended'
 
-describe('DbLoadSurveyById', () => {
+describe('DbLoadSurveyById Usecase', () => {
   const makeSut = (): DbLoadSurveyById => new DbLoadSurveyById(loadSurveyByIdRepositorySpy)
   const loadSurveyByIdRepositorySpy = mock<LoadSurveyByIdRepository>()
 
