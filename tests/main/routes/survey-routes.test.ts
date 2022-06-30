@@ -1,21 +1,21 @@
-import request from 'supertest'
-import { setupApp } from '../../../src/main/config/app'
-import { MongoHelper } from '../../../src/infra/db/mongodb'
-import { mockSurveyModel, mockSurveyParamsArray } from '../../domain/mocks'
+import { setupApp } from '@main/config/app'
+import { MongoHelper } from '@infra/db/mongodb'
+import { mockSurveyModel, mockSurveyParamsArray } from '@tests/domain/mocks'
 import { Collection } from 'mongodb'
 import { Express } from 'express'
-import { mockAccessToken } from '../mocks'
-
-let surveyCollection: Collection
-let accountCollection: Collection
-let app: Express
-
-const makeAccessToken = async (role?: string): Promise<string> => mockAccessToken(accountCollection, role)
+import { mockAccessToken } from '@tests/main/mocks'
+import request from 'supertest'
 
 describe('Login Routes', () => {
+  let surveyCollection: Collection
+  let accountCollection: Collection
+  let app: Express
+
   beforeAll(async () => {
     app = await setupApp()
     await MongoHelper.connect(process.env.MONGO_URL)
+    surveyCollection = MongoHelper.getCollection('surveys')
+    accountCollection = MongoHelper.getCollection('accounts')
   })
 
   afterAll(async () => {
@@ -23,9 +23,7 @@ describe('Login Routes', () => {
   })
 
   beforeEach(async () => {
-    surveyCollection = MongoHelper.getCollection('surveys')
     await surveyCollection.deleteMany({})
-    accountCollection = MongoHelper.getCollection('accounts')
     await accountCollection.deleteMany({})
   })
 
@@ -38,7 +36,7 @@ describe('Login Routes', () => {
     })
 
     it('should return 204 on add survey with valid accessToken', async () => {
-      const accessToken = await makeAccessToken('admin')
+      const accessToken = await mockAccessToken(accountCollection, 'admin')
       await request(app)
         .post('/api/surveys')
         .set('x-access-token', accessToken)
@@ -55,7 +53,7 @@ describe('Login Routes', () => {
     })
 
     it('should return 200 on load survey with valid accessToken', async () => {
-      const accessToken = await makeAccessToken()
+      const accessToken = await mockAccessToken(accountCollection)
       await surveyCollection.insertMany(mockSurveyParamsArray(4))
       await request(app)
         .get('/api/surveys')

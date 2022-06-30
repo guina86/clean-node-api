@@ -1,4 +1,4 @@
-import env from '../../../src/main/config/env'
+import env from '@main/config/env'
 import { Collection } from 'mongodb'
 import { sign } from 'jsonwebtoken'
 

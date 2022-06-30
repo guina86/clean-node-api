@@ -1,11 +1,11 @@
+import { setupApp } from '@main/config/app'
+import { noCache } from '@main/middlewares'
 import { Express } from 'express'
 import request from 'supertest'
-import { setupApp } from '../../../src/main/config/app'
-import { noCache } from '../../../src/main/middlewares'
-
-let app: Express
 
 describe('NoCache Middleware', () => {
+  let app: Express
+
   beforeAll(async () => {
     app = await setupApp()
   })

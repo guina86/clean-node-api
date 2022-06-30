@@ -1,10 +1,10 @@
+import { setupApp } from '@main/config/app'
 import { Express } from 'express'
 import request from 'supertest'
-import { setupApp } from '../../../src/main/config/app'
-
-let app: Express
 
 describe('Body Parser Middleware', () => {
+  let app: Express
+
   beforeAll(async () => {
     app = await setupApp()
   })

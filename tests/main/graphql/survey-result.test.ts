@@ -1,21 +1,21 @@
-import request from 'supertest'
-import { setupApp } from '../../../src/main/config/app'
-import { MongoHelper } from '../../../src/infra/db/mongodb'
-import { mockSurveyParams } from '../../domain/mocks'
+import { MongoHelper } from '@infra/db/mongodb'
+import { setupApp } from '@main/config/app'
+import { mockSurveyParams } from '@tests/domain/mocks'
+import { mockAccessToken } from '@tests/main/mocks'
 import { Collection } from 'mongodb'
 import { Express } from 'express'
-import { mockAccessToken } from '../mocks/mockAccessToken'
-
-let surveyCollection: Collection
-let accountCollection: Collection
-let app: Express
-
-const makeAccessToken = async (role?: string): Promise<string> => mockAccessToken(accountCollection, role)
+import request from 'supertest'
 
 describe('SurveyResult GraphQL', () => {
+  let surveyCollection: Collection
+  let accountCollection: Collection
+  let app: Express
+
   beforeAll(async () => {
     app = await setupApp()
     await MongoHelper.connect(process.env.MONGO_URL)
+    surveyCollection = MongoHelper.getCollection('surveys')
+    accountCollection = MongoHelper.getCollection('accounts')
   })
 
   afterAll(async () => {
@@ -23,9 +23,7 @@ describe('SurveyResult GraphQL', () => {
   })
 
   beforeEach(async () => {
-    surveyCollection = MongoHelper.getCollection('surveys')
     await surveyCollection.deleteMany({})
-    accountCollection = MongoHelper.getCollection('accounts')
     await accountCollection.deleteMany({})
   })
 
@@ -50,19 +48,21 @@ describe('SurveyResult GraphQL', () => {
       const res = await request(app)
         .post('/graphql')
         .send({ query })
+
       expect(res.status).toBe(403)
       expect(res.body.data).toBeFalsy()
       expect(res.body.errors[0].message).toBe('Access denied')
     })
 
     it('should return 200 with a survey result', async () => {
-      const accessToken = await makeAccessToken()
+      const accessToken = await mockAccessToken(accountCollection)
       const surveyId = (await surveyCollection.insertOne(mockSurveyParams())).insertedId.toHexString()
       const query = makeQuery(surveyId)
       const res = await request(app)
         .post('/graphql')
         .set('x-access-token', accessToken)
         .send({ query })
+
       expect(res.status).toBe(200)
       expect(res.body.data.surveyResult.question).toBe('question 1')
       expect(res.body.data.surveyResult.answers[0].count).toBe(0)
@@ -93,19 +93,21 @@ describe('SurveyResult GraphQL', () => {
       const res = await request(app)
         .post('/graphql')
         .send({ query })
+
       expect(res.status).toBe(403)
       expect(res.body.data).toBeFalsy()
       expect(res.body.errors[0].message).toBe('Access denied')
     })
 
     it('should return 200 with a survey result', async () => {
-      const accessToken = await makeAccessToken()
+      const accessToken = await mockAccessToken(accountCollection)
       const surveyId = (await surveyCollection.insertOne(mockSurveyParams())).insertedId.toHexString()
       const query = makeMutation(surveyId, 'answer B')
       const res = await request(app)
         .post('/graphql')
         .set('x-access-token', accessToken)
         .send({ query })
+
       expect(res.status).toBe(200)
       expect(res.body.data.saveSurveyResult.question).toBe('question 1')
       expect(res.body.data.saveSurveyResult.answers[0].count).toBe(0)

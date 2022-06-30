@@ -1,17 +1,18 @@
-import request from 'supertest'
-import { setupApp } from '../../../src/main/config/app'
-import { MongoHelper } from '../../../src/infra/db/mongodb'
+import { setupApp } from '@main/config/app'
+import { MongoHelper } from '@infra/db/mongodb'
 import { hash } from 'bcrypt'
-import { Collection } from 'mongodb'
 import { Express } from 'express'
-
-let accountCollection: Collection
-let app: Express
+import { Collection } from 'mongodb'
+import request from 'supertest'
 
 describe('Login Routes', () => {
+  let accountCollection: Collection
+  let app: Express
+
   beforeAll(async () => {
     app = await setupApp()
     await MongoHelper.connect(process.env.MONGO_URL)
+    accountCollection = MongoHelper.getCollection('accounts')
   })
 
   afterAll(async () => {
@@ -19,7 +20,6 @@ describe('Login Routes', () => {
   })
 
   beforeEach(async () => {
-    accountCollection = MongoHelper.getCollection('accounts')
     await accountCollection.deleteMany({})
   })
 
