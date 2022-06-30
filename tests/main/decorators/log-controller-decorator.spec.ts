@@ -1,8 +1,31 @@
 import { LogErrorRepository } from '@data/protocols'
 import { LogControllerDecorator } from '@main/decorators'
-import { Controller } from '@presentation/protocols'
-import { mockRequest, mockResponse, mockServerError } from '@tests/main/mocks'
+import { serverError } from '@presentation/helpers'
+import { Controller, HttpResponse } from '@presentation/protocols'
 import { mock } from 'jest-mock-extended'
+
+export const mockRequest = (): any => ({
+  name: 'any_name',
+  email: 'any_email@mail.com',
+  password: 'any_password',
+  passwordConfirmation: 'any_password'
+})
+
+export const mockResponse = (): HttpResponse => ({
+  statusCode: 200,
+  body: {
+    id: 'valid_id',
+    name: 'valid_name',
+    email: 'valid_mail@mail.com',
+    password: 'hashed_password'
+  }
+})
+
+export const mockServerError = (): HttpResponse => {
+  const fakeError = new Error()
+  fakeError.stack = 'any_stack'
+  return serverError(fakeError)
+}
 
 describe('LogControllerDecorator', () => {
   const makeSut = (): LogControllerDecorator => new LogControllerDecorator(controllerSpy, logErrorRepositorySpy)
