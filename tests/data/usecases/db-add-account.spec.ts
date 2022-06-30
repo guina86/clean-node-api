@@ -15,9 +15,7 @@ describe('DbAddAccount Usecase', () => {
     hasherSpy.hash.mockResolvedValue('hashed_password')
   })
 
-  beforeEach(() => {
-    jest.clearAllMocks()
-  })
+  beforeEach(jest.clearAllMocks)
 
   it('should call Hasher with correct password', async () => {
     const sut = makeSut()

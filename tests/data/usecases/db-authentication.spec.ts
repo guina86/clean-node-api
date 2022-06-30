@@ -22,9 +22,7 @@ describe('DbAuthentication UseCase', () => {
     updateAccessTokenRepositorySpy.updateAccessToken.mockResolvedValue(null)
   })
 
-  beforeEach(() => {
-    jest.clearAllMocks()
-  })
+  beforeEach(jest.clearAllMocks)
 
   it('should call LoadAccountByEmailRepository with correct email', async () => {
     const sut = makeSut()
