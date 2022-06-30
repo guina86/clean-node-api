@@ -5,7 +5,17 @@
     "target": "es2020",
     "esModuleInterop": true,
     "sourceMap": true,
-    "rootDirs": ["src", "tests"]
+    "rootDirs": ["src", "tests"],
+    "baseUrl": "src",
+    "paths": {
+      "@data/*": ["data/*"],
+      "@domain/*": ["domain/*"],
+      "@infra/*": ["infra/*"],
+      "@main/*": ["main/*"],
+      "@presentation/*": ["presentation/*"],
+      "@validation/*": ["validation/*"],
+      "@tests/*": ["../tests/*"]
+    }
   },
   "include": [ "src", "tests" ],
   "exclude": []
