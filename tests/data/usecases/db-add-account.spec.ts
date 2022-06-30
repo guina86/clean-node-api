@@ -1,6 +1,6 @@
 import { DbAddAccount } from '@data/usecases'
-import { mockAccountModel, mockAccountParams } from '@tests/domain/mocks'
 import { AddAccountRepository, Hasher, LoadAccountByEmailRepository } from '@data/protocols'
+import { mockAccountModel, mockAccountParams } from '@tests/domain/mocks'
 import { mock } from 'jest-mock-extended'
 
 describe('DbAddAccount Usecase', () => {
