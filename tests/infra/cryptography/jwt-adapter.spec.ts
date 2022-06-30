@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'
 
 jest.mock('jsonwebtoken', () => ({
   sign: async (): Promise<string> => 'any_token',
-  verify: async (): Promise<string> => 'any_value'
+  verify: (): any => ({ id: 'any_id' })
 }))
 
 describe('Jwt Adapter', () => {
@@ -45,7 +45,7 @@ describe('Jwt Adapter', () => {
 
       await sut.decrypt('any_token')
 
-      expect(verifySpy).toHaveBeenCalledWith('any_token', 'secret', expect.any(Function))
+      expect(verifySpy).toHaveBeenCalledWith('any_token', 'secret')
     })
 
     it('should return a value on verify success', async () => {
@@ -53,16 +53,25 @@ describe('Jwt Adapter', () => {
 
       const value = await sut.decrypt('any_token')
 
-      expect(value).toBe('any_token')
+      expect(value).toBe('any_id')
     })
 
-    it('should throw if verify throws', async () => {
+    it('should return null if verify throws', async () => {
       const sut = makeSut()
       jest.spyOn(jwt, 'verify').mockImplementationOnce(throwError)
 
-      const promise = sut.decrypt('any_token')
+      const result = await sut.decrypt('any_token')
 
-      await expect(promise).rejects.toThrow()
+      expect(result).toBeNull()
+    })
+
+    it('should return null if verify returns null', async () => {
+      const sut = makeSut()
+      jest.spyOn(jwt, 'verify').mockImplementationOnce(() => null)
+
+      const result = await sut.decrypt('any_token')
+
+      expect(result).toBeNull()
     })
   })
 })

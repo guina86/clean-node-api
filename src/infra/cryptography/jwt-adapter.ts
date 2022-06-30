@@ -1,6 +1,10 @@
 import { Encrypter, Decrypter } from '../../data/protocols'
 import jwt from 'jsonwebtoken'
 
+type Result = {
+  id: string
+}
+
 export class JwtAdapter implements Encrypter, Decrypter {
   constructor (private readonly secret: string) {}
 
@@ -9,9 +13,12 @@ export class JwtAdapter implements Encrypter, Decrypter {
   }
 
   async decrypt (token: string): Promise<string> {
-    jwt.verify(token, this.secret, (err, decoded) => {
-      if (err) return null
-    })
-    return token
+    let result: Result
+    try {
+      result = jwt.verify(token, this.secret) as Result
+    } catch (error) {
+      return null
+    }
+    return result?.id ? result.id : null
   }
 }

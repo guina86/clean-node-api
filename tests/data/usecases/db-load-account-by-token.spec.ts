@@ -9,7 +9,7 @@ describe('DbLoadAccountByToken Usecase', () => {
   const loadAccountByTokenRepositorySpy = mock<LoadAccountByTokenRepository>()
 
   beforeAll(() => {
-    decrypterSpy.decrypt.mockResolvedValue('decrypted_value')
+    decrypterSpy.decrypt.mockResolvedValue('any_id')
     loadAccountByTokenRepositorySpy.loadByToken.mockResolvedValue(mockAccountModel())
   })
 
@@ -37,7 +37,7 @@ describe('DbLoadAccountByToken Usecase', () => {
 
     await sut.load('any_token', 'any_role')
 
-    expect(loadAccountByTokenRepositorySpy.loadByToken).toHaveBeenLastCalledWith('decrypted_value', 'any_role')
+    expect(loadAccountByTokenRepositorySpy.loadByToken).toHaveBeenLastCalledWith('any_token', 'any_role')
   })
 
   it('should return null if LoadAccountByTokenRepository retuns null', async () => {
