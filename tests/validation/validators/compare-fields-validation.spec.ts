@@ -1,7 +1,7 @@
-import { CompareFieldsValidation } from '../../../src/validation/validators'
-import { InvalidParamError } from '../../../src/presentation/errors'
+import { CompareFieldsValidation } from '@validation/validators'
+import { InvalidParamError } from '@presentation/errors'
 
-describe('RequiredField Validation', () => {
+describe('ComparedFieldsValidation', () => {
   it('should return a InvalidParamError if fields are not equal', () => {
     const sut = new CompareFieldsValidation('field', 'fieldToCompare')
     const error = sut.validate({ field: 'any_value', fieldToCompare: 'wrong_value' })
