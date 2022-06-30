@@ -1,7 +1,7 @@
 import { DbLoadSurveyResult } from '@data/usecases'
+import { LoadSurveyResultRepository } from '@data/protocols'
 import { mockSurveyResultModel } from '@tests/domain/mocks'
 import { mock } from 'jest-mock-extended'
-import { LoadSurveyResultRepository } from '@data/protocols'
 
 describe('DbLoadSurveyResult UseCase', () => {
   const makeSut = (): DbLoadSurveyResult => new DbLoadSurveyResult(loadSurveyResultRepositorySpy)
