@@ -1,24 +1,27 @@
-import { SurveyResultMongoRepository, MongoHelper } from '../../../../src/infra/db/mongodb'
-import { mockAccountParams, mockSurveyParams, mockSurveyResultObject, mockSurveyResultParams } from '../../../domain/mocks'
+import { SurveyResultMongoRepository, MongoHelper } from '@infra/db/mongodb'
+import { mockAccountParams, mockSurveyParams, mockSurveyResultObject, mockSurveyResultParams } from '@tests/domain/mocks'
 import { Collection } from 'mongodb'
 
-let surveyCollection: Collection
-let surveyResultCollection: Collection
-let accountCollection: Collection
-
-const makeAccountId = async (): Promise<string> => {
-  const res = await accountCollection.insertOne(mockAccountParams())
-  return res.insertedId.toHexString()
-}
-
-const makeSurveyId = async (): Promise<string> => {
-  const res = await surveyCollection.insertOne(mockSurveyParams())
-  return res.insertedId.toHexString()
-}
-
 describe('SurveyResultMongoRepository', () => {
+  const makeSut = (): SurveyResultMongoRepository => new SurveyResultMongoRepository()
+  let surveyCollection: Collection
+  let surveyResultCollection: Collection
+  let accountCollection: Collection
+
+  const makeAccountId = async (): Promise<string> => {
+    const res = await accountCollection.insertOne(mockAccountParams())
+    return res.insertedId.toHexString()
+  }
+  const makeSurveyId = async (): Promise<string> => {
+    const res = await surveyCollection.insertOne(mockSurveyParams())
+    return res.insertedId.toHexString()
+  }
+
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL)
+    surveyCollection = MongoHelper.getCollection('surveys')
+    surveyResultCollection = MongoHelper.getCollection('surveyResults')
+    accountCollection = MongoHelper.getCollection('accounts')
   })
 
   afterAll(async () => {
@@ -26,21 +29,20 @@ describe('SurveyResultMongoRepository', () => {
   })
 
   beforeEach(async () => {
-    surveyCollection = MongoHelper.getCollection('surveys')
     await surveyCollection.deleteMany({})
-    surveyResultCollection = MongoHelper.getCollection('surveyResults')
     await surveyResultCollection.deleteMany({})
-    accountCollection = MongoHelper.getCollection('accounts')
     await accountCollection.deleteMany({})
   })
 
   describe('save()', () => {
     it('should add a surveyResult if its new', async () => {
-      const sut = new SurveyResultMongoRepository()
+      const sut = makeSut()
       const surveyId = await makeSurveyId()
       const accountId = await makeAccountId()
       const surveyResultData = mockSurveyResultParams(surveyId, accountId, 'answer A')
+
       const surveyResult = await sut.save(surveyResultData)
+
       expect(surveyResult).toBeTruthy()
       expect(surveyResult.surveyId).toBe(surveyId)
       expect(surveyResult.answers).toHaveLength(3)
@@ -56,11 +58,13 @@ describe('SurveyResultMongoRepository', () => {
     })
 
     it('should update a surveyResult if it already exists', async () => {
-      const sut = new SurveyResultMongoRepository()
+      const sut = makeSut()
       const surveyId = await makeSurveyId()
       const accountId = await makeAccountId()
       await surveyResultCollection.insertOne(mockSurveyResultObject(surveyId, accountId, 'answer A'))
+
       const surveyResult = await sut.save(mockSurveyResultParams(surveyId, accountId, 'answer B'))
+
       expect(surveyResult).toBeTruthy()
       expect(surveyResult.surveyId).toBe(surveyId)
       expect(surveyResult.answers).toHaveLength(3)
@@ -73,7 +77,7 @@ describe('SurveyResultMongoRepository', () => {
 
   describe('loadBySurveyId()', () => {
     it('should load a surveyResult', async () => {
-      const sut = new SurveyResultMongoRepository()
+      const sut = makeSut()
       const surveyId = await makeSurveyId()
       const accountId = await makeAccountId()
       await surveyResultCollection.insertMany([
@@ -83,7 +87,9 @@ describe('SurveyResultMongoRepository', () => {
         mockSurveyResultObject(surveyId, await makeAccountId(), 'answer A'),
         mockSurveyResultObject(surveyId, await makeAccountId(), 'answer A')
       ])
+
       const surveyResult = await sut.loadBySurveyId(surveyId, accountId)
+
       expect(surveyResult).toBeTruthy()
       expect(surveyResult.surveyId).toBe(surveyId)
       expect(surveyResult.answers).toHaveLength(3)
@@ -99,7 +105,7 @@ describe('SurveyResultMongoRepository', () => {
     })
 
     it('should load a surveyResult if currentUser have not voted', async () => {
-      const sut = new SurveyResultMongoRepository()
+      const sut = makeSut()
       const surveyId = await makeSurveyId()
       const accountId = await makeAccountId()
       await surveyResultCollection.insertMany([
@@ -107,7 +113,9 @@ describe('SurveyResultMongoRepository', () => {
         mockSurveyResultObject(surveyId, await makeAccountId(), 'answer A'),
         mockSurveyResultObject(surveyId, await makeAccountId(), 'answer A')
       ])
+
       const surveyResult = await sut.loadBySurveyId(surveyId, accountId)
+
       expect(surveyResult).toBeTruthy()
       expect(surveyResult.surveyId).toBe(surveyId)
       expect(surveyResult.answers).toHaveLength(3)
@@ -123,10 +131,12 @@ describe('SurveyResultMongoRepository', () => {
     })
 
     it('should load a surveyResult if no votes have been casted', async () => {
-      const sut = new SurveyResultMongoRepository()
+      const sut = makeSut()
       const surveyId = await makeSurveyId()
       const accountId = await makeAccountId()
+
       const surveyResult = await sut.loadBySurveyId(surveyId, accountId)
+
       expect(surveyResult).toBeTruthy()
       expect(surveyResult.surveyId).toBe(surveyId)
       expect(surveyResult.answers).toHaveLength(3)
@@ -136,9 +146,11 @@ describe('SurveyResultMongoRepository', () => {
     })
 
     it('should return null if an invalid surveyId is provided', async () => {
-      const sut = new SurveyResultMongoRepository()
+      const sut = makeSut()
       const accountId = await makeAccountId()
+
       const surveyResult = await sut.loadBySurveyId('628acb10c22bfab572304ec8', accountId)
+
       expect(surveyResult).toBeNull()
     })
   })
