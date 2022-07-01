@@ -1,5 +1,5 @@
-import { adaptResolver } from '../../adapters'
-import { makeLoginController, makeSignUpController } from '../../factories'
+import { adaptResolver } from '@main/adapters'
+import { makeLoginController, makeSignUpController } from '@main/factories'
 
 export default {
   Query: {

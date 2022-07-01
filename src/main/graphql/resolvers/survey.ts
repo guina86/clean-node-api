@@ -1,5 +1,5 @@
-import { adaptResolver } from '../../adapters'
-import { makeLoadSurveysController } from '../../factories'
+import { adaptResolver } from '@main/adapters'
+import { makeLoadSurveysController } from '@main/factories'
 
 export default {
   Query: {

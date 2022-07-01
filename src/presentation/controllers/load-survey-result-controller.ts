@@ -1,7 +1,7 @@
-import { LoadSurveyById, LoadSurveyResult } from '../../domain/usecases'
-import { InvalidParamError } from '../errors'
-import { forbidden, ok, serverError } from '../helpers'
-import { Controller, HttpResponse } from '../protocols'
+import { LoadSurveyById, LoadSurveyResult } from '@domain/usecases'
+import { InvalidParamError } from '@presentation/errors'
+import { forbidden, ok, serverError } from '@presentation/helpers'
+import { Controller, HttpResponse } from '@presentation/protocols'
 
 export type LoadSurveyResultControllerRequest = {
   surveyId: string

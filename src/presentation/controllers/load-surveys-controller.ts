@@ -1,6 +1,6 @@
-import { noContent, ok, serverError } from '../helpers'
-import { Controller, HttpResponse } from '../protocols'
-import { LoadSurveys } from '../../domain/usecases'
+import { noContent, ok, serverError } from '@presentation/helpers'
+import { Controller, HttpResponse } from '@presentation/protocols'
+import { LoadSurveys } from '@domain/usecases'
 
 export type LoadSurveysControllerRequest = {
   accountId: string

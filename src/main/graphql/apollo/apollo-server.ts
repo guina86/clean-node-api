@@ -1,9 +1,9 @@
-import { ApolloServer } from 'apollo-server-express'
-import typeDefs from '../type-defs'
-import resolvers from '../resolvers'
-import { GraphQLError } from 'graphql'
+import typeDefs from '@main/graphql/type-defs'
+import resolvers from '@main/graphql/resolvers'
+import { authDirectiveTransformer } from '@main/graphql/directives'
 import { makeExecutableSchema } from '@graphql-tools/schema'
-import { authDirectiveTransformer } from '../directives'
+import { ApolloServer } from 'apollo-server-express'
+import { GraphQLError } from 'graphql'
 
 const handleErrors = (response: any, errors: readonly GraphQLError[]): void => {
   errors?.forEach(error => {

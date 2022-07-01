@@ -1,6 +1,6 @@
-import { badRequest, ok, serverError, unauthorized } from '../helpers'
-import { Controller, HttpResponse, Validation } from '../protocols'
-import { Authentication } from '../../domain/usecases'
+import { badRequest, ok, serverError, unauthorized } from '@presentation/helpers'
+import { Controller, HttpResponse, Validation } from '@presentation/protocols'
+import { Authentication } from '@domain/usecases'
 
 export type LoginControllerRequest = {
   email: string

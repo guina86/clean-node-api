@@ -1,7 +1,7 @@
-import { MongoHelper } from './mongo-helper'
-import { AddAccountRepository, LoadAccountByEmailRepository, LoadAccountByTokenRepository, UpdateAccessTokenRepository } from '../../../data/protocols'
-import { AccountModel } from '../../../domain/models'
-import { AddAccountParams } from '../../../domain/usecases'
+import { AddAccountRepository, LoadAccountByEmailRepository, LoadAccountByTokenRepository, UpdateAccessTokenRepository } from '@data/protocols'
+import { AccountModel } from '@domain/models'
+import { AddAccountParams } from '@domain/usecases'
+import { MongoHelper } from '@infra/db/mongodb'
 
 export class AccountMongorepository implements AddAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadAccountByTokenRepository {
   async add (accountData: AddAccountParams): Promise<boolean> {
